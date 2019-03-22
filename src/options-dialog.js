@@ -7,7 +7,6 @@ const UNIT_TEXTFIELD_INDENTIFIERS = ['pageWidthUnits', 'pageHeightUnits', 'bleed
 module.exports = class OptionsDialog {
 
   constructor(pluginName, model, context) {
-    console.log(model)
     this.nib = loadNib('PEOptionsAccessoryView')
 
     const exportTypeHandler = function() {}

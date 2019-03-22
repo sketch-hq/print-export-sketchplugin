@@ -7,14 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "MSArtboardGroup.h"
+#import "MSImmutableArtboardGroup.h"
+#import "MSImmutableDocumentData.h"
+#import "MSColor-Protocol.h"
 
 extern CGFloat PEMMToUnit(CGFloat millimeter);
 extern CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat height);
 
 @interface PEUtils : NSObject
 
-+ (CGPDFDocumentRef)PDFOfArtboard:(MSArtboardGroup*)artboard;
++ (CGPDFDocumentRef)PDFOfArtboard:(MSImmutableArtboardGroup *)artboard documentData:(MSImmutableDocumentData *)documentData;
 + (CGSize)fitSize:(CGSize)sourceSize inSize:(CGSize)targetSize;
 + (BOOL)colorIsWhite:(id<MSColor>)color;
 

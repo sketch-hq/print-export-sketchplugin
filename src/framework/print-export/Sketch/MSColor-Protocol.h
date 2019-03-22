@@ -1,5 +1,5 @@
 //
-//  MSCOlor-Protocol.h
+//  MSColor-Protocol.h
 //  print-export
 //
 //  Created by Mark Horgan on 21/03/2019.

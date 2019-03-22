@@ -11,9 +11,6 @@
 
 @interface MSDocumentData: MSModelObject
 
-@property (readonly, nonatomic) NSArray<MSPage*> *pages;
-@property (readonly, nonatomic) MSPage *currentPage;
-
 - (MSPage*)symbolsPage;
 
 @end

@@ -7,10 +7,7 @@
 //
 
 #import "MSModelObject.h"
-#import "MSArtboardGroup.h"
 
 @interface MSPage : MSModelObject
-
-@property (readonly, nonatomic) NSArray<MSArtboardGroup*> *artboards;
 
 @end

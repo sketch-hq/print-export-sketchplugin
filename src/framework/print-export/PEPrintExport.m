@@ -12,17 +12,18 @@
 #import "PEOptions.h"
 #import "PEUtils.h"
 #import "MSDocument.h"
+#import "MSImmutableDocumentData.h"
 
 // millimeters
 static const CGFloat kCropMarkLength = 5;
-static const CGFloat kArtboardPageMargin = 20;
+static const CGFloat kMinimumPageMargin = 20;
 
 @interface PEPrintExport()
 
 @property (readonly, nonatomic) NSString *symbolsPageID;
 @property (readonly, nonatomic) NSURL *fileURL;
 @property (readonly, nonatomic) PEOptions *options;
-@property (readonly, nonatomic) MSDocumentData *documentData;
+@property (readonly, nonatomic) MSImmutableDocumentData *documentData;
 @property (readonly, nonatomic) CFDictionaryRef auxiliaryInfo;
 @property (readonly, nonatomic) CGRect mediaBox;
 @property (readonly, nonatomic) CGRect bleedBox;
@@ -67,12 +68,12 @@ static const CGFloat kArtboardPageMargin = 20;
 
 - (instancetype)initWithDocument:(MSDocument*)document fileURL:(NSURL *)fileURL options:(PEOptions*)options {
     if (self = [super init]) {
-        _documentData = document.documentData;
+        _documentData = document.documentData.immutableModelObject;
         _fileURL = fileURL;
         _options = options;
         _symbolsPageID = [document.documentData symbolsPage].objectID;
         _auxiliaryInfo = [self buildAuxiliaryInfoWithOptions:self.options];
-        _artboardPageMargin = PEMMToUnit(kArtboardPageMargin);
+        _artboardPageMargin = PEMMToUnit(kMinimumPageMargin);
         _slugBleed = self.options.slug + self.options.bleed;
     }
     return self;
@@ -87,7 +88,7 @@ static const CGFloat kArtboardPageMargin = 20;
     }
     switch (self.options.scope) {
         case PEScopeAllPages:
-            for (MSPage *page in self.documentData.pages) {
+            for (MSImmutablePage *page in self.documentData.pages) {
                 if (![page.objectID isEqualToString:self.symbolsPageID]) {
                     [self generateArtboardsWithPage:page context:ctx];
                 }
@@ -115,8 +116,8 @@ static const CGFloat kArtboardPageMargin = 20;
     }
 }
 
-- (void)generateArtboardsWithPage:(MSPage*)page context:(CGContextRef)ctx {
-    NSArray<MSArtboardGroup*> *sortedArtboards = [page.artboards sortedArrayUsingComparator:^(MSArtboardGroup *artboard1, MSArtboardGroup *artboard2) {
+- (void)generateArtboardsWithPage:(MSImmutablePage*)page context:(CGContextRef)ctx {
+    NSArray<MSImmutableArtboardGroup*> *sortedArtboards = [page.artboards sortedArrayUsingComparator:^(MSImmutableArtboardGroup *artboard1, MSImmutableArtboardGroup *artboard2) {
         if (artboard1.rect.origin.y < artboard2.rect.origin.y) {
             return NSOrderedAscending;
         } else if (artboard1.rect.origin.y > artboard2.rect.origin.y) {
@@ -130,14 +131,14 @@ static const CGFloat kArtboardPageMargin = 20;
         }
         return NSOrderedSame;
     }];
-    for (MSArtboardGroup *artboard in sortedArtboards) {
+    for (MSImmutableArtboardGroup *artboard in sortedArtboards) {
         CGContextBeginPage(ctx, NULL);
         CGContextSaveGState(ctx);
         if (self.options.hasCropMarks) {
             [self generateCropMarksWithContext:ctx];
         }
         // Artboard
-        CGPDFDocumentRef artboardPDF = [PEUtils PDFOfArtboard:artboard];
+        CGPDFDocumentRef artboardPDF = [PEUtils PDFOfArtboard:artboard documentData:self.documentData];
         CGPDFPageRef pdfPage = CGPDFDocumentGetPage(artboardPDF, 1);
         CGSize boundingSize = CGSizeMake(self.options.pageSize.width - (self.artboardPageMargin * 2), self.options.pageSize.height - (self.artboardPageMargin * 2));
         CGSize targetSize = [PEUtils fitSize:artboard.rect.size inSize:boundingSize];
@@ -224,5 +225,10 @@ static const CGFloat kArtboardPageMargin = 20;
     CFDictionarySetValue(info, kCGPDFContextTrimBox, trimBoxData);
     return info;
 }
+
+/*- (CGSize)sizeOfArtboardsInPage:(MSPage*)page {
+    NSNumber *minX, *minY, *maxX, *maxY;
+    
+}*/
 
 @end
