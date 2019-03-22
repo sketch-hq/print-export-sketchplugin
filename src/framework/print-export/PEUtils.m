@@ -23,7 +23,7 @@ CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat height) {
 
 @implementation PEUtils
 
-+ (CGPDFPageRef)PDFPageOfArtboard:(MSImmutableArtboardGroup *)artboard documentData:(MSImmutableDocumentData *)documentData {
++ (CGPDFDocumentRef)createPDFPageOfArtboard:(MSImmutableArtboardGroup *)artboard documentData:(MSImmutableDocumentData *)documentData {
     Class cls = NSClassFromString(kMSImmutableLayerAncestry);
     MSImmutableLayerAncestry* layerAncestry = [cls alloc];
     SEL selector = NSSelectorFromString(@"initWithLayer:document:");
@@ -57,8 +57,12 @@ CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat height) {
     MethodType5 method5 = (MethodType5)[exportManager methodForSelector:selector];
     NSData *data = method5(exportManager, selector, exportRequest);
     
-    CGPDFDocumentRef PDF = CGPDFDocumentCreateWithProvider(CGDataProviderCreateWithCFData(CFDataCreate(NULL, data.bytes, data.length)));
-    return CGPDFDocumentGetPage(PDF, 1);
+    CFDataRef cfData = CFDataCreate(kCFAllocatorDefault, data.bytes, data.length);
+    CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(cfData);
+    CFRelease(cfData);
+    CGPDFDocumentRef PDF = CGPDFDocumentCreateWithProvider(dataProvider);
+    CFRelease(dataProvider);
+    return PDF;
 }
 
 + (CGSize)fitSize:(CGSize)sourceSize inSize:(CGSize)targetSize {

@@ -74,12 +74,16 @@ static NSString *const kFontName = @"Helvetica Neue";
         _fileURL = fileURL;
         _options = options;
         _symbolsPageID = [document.documentData symbolsPage].objectID;
-        _auxiliaryInfo = [self buildAuxiliaryInfoWithOptions:self.options];
+        _auxiliaryInfo = [self createAuxiliaryInfoWithOptions:self.options];
         _pageMargin = PEMMToUnit(kPageMargin);
         _slugBleed = self.options.slug + self.options.bleed;
         _maxPageSize = CGSizeMake(self.options.pageSize.width - (self.pageMargin * 2), self.options.pageSize.height - (self.pageMargin * 2));
     }
     return self;
+}
+
+- (void)dealloc {
+    CFRelease(self.auxiliaryInfo);
 }
 
 - (void)generateArtboardPerPage {
@@ -159,14 +163,16 @@ static NSString *const kFontName = @"Helvetica Neue";
         if (self.options.hasCropMarks) {
             [self drawCropMarksWithContext:ctx];
         }
-        CGPDFPageRef pdfPage = [PEUtils PDFPageOfArtboard:artboard documentData:self.documentData];
+        CGPDFDocumentRef artboardPDF = [PEUtils createPDFPageOfArtboard:artboard documentData:self.documentData];
+        CGPDFPageRef artboardPDFPage = CGPDFDocumentGetPage(artboardPDF, 1);
         CGSize targetSize = [PEUtils fitSize:artboard.rect.size inSize:self.maxPageSize];
-        CGRect artboardPDFRect = CGPDFPageGetBoxRect(pdfPage, kCGPDFCropBox);
+        CGRect artboardPDFRect = CGPDFPageGetBoxRect(artboardPDFPage, kCGPDFCropBox);
         CGContextSaveGState(ctx);
         CGRect targetRect = CGRectMake((self.mediaBox.size.width - targetSize.width) / 2.0, (self.mediaBox.size.height - targetSize.height) / 2.0, targetSize.width, targetSize.height);
         CGContextTranslateCTM(ctx, targetRect.origin.x, targetRect.origin.y);
         CGContextScaleCTM(ctx, targetSize.width / artboardPDFRect.size.width, targetSize.height / artboardPDFRect.size.height);
-        CGContextDrawPDFPage(ctx, pdfPage);
+        CGContextDrawPDFPage(ctx, artboardPDFPage);
+        CFRelease(artboardPDF);
         CGContextRestoreGState(ctx);
         if (self.options.showArboardBorder) {
             [self drawArtboardBorderWithArtboard:artboard rect:targetRect context:ctx];
@@ -191,12 +197,14 @@ static NSString *const kFontName = @"Helvetica Neue";
     CGPoint origin = CGPointMake((self.mediaBox.size.width - targetSize.width) / 2.0, (self.mediaBox.size.height - targetSize.height) / 2.0);
     CGContextTranslateCTM(ctx, origin.x, origin.y);
     for (MSImmutableArtboardGroup *artboard in page.artboards) {
-        CGPDFPageRef pdfPage = [PEUtils PDFPageOfArtboard:artboard documentData:self.documentData];
-        CGRect artboardPDFRect = CGPDFPageGetBoxRect(pdfPage, kCGPDFCropBox);
+        CGPDFDocumentRef artboardPDF = [PEUtils createPDFPageOfArtboard:artboard documentData:self.documentData];
+        CGPDFPageRef artboardPDFPage = CGPDFDocumentGetPage(artboardPDF, 1);
+        CGRect artboardPDFRect = CGPDFPageGetBoxRect(artboardPDFPage, kCGPDFCropBox);
         CGContextSaveGState(ctx);
         CGContextScaleCTM(ctx, (artboard.rect.size.width * scale) / artboardPDFRect.size.width, (artboard.rect.size.height * scale) / artboardPDFRect.size.height);
         CGContextTranslateCTM(ctx, artboard.rect.origin.x - artboardsRect.origin.x, artboardsRect.size.height - (artboard.rect.origin.y - artboardsRect.origin.y + artboard.rect.size.height));
-        CGContextDrawPDFPage(ctx, pdfPage);
+        CGContextDrawPDFPage(ctx, artboardPDFPage);
+        CFRelease(artboardPDF);
         if (self.options.showArboardBorder) {
             [self drawArtboardBorderWithArtboard:artboard rect:CGRectMake(0, 0, artboard.rect.size.width, artboard.rect.size.height) context:ctx];
         }
@@ -276,7 +284,7 @@ static NSString *const kFontName = @"Helvetica Neue";
     CGContextConcatCTM(ctx, CGAffineTransformMake(1, 0, 0, -1, 0, self.mediaBox.size.height));
 }
 
-- (CFDictionaryRef)buildAuxiliaryInfoWithOptions:(PEOptions *)options {
+- (CFDictionaryRef)createAuxiliaryInfoWithOptions:(PEOptions *)options {
     _mediaBox = CGRectMake(0, 0, self.options.pageSize.width + ((self.options.slug + self.options.bleed) * 2), self.options.pageSize.height + ((self.options.slug + self.options.bleed) * 2));
     _bleedBox = CGRectMake(self.options.slug, self.options.slug, self.options.pageSize.width + (self.options.bleed * 2), self.options.pageSize.height + (self.options.bleed * 2));
     _trimBox = CGRectMake(self.options.slug + self.options.bleed, self.options.slug + self.options.bleed, self.options.pageSize.width, self.options.pageSize.height);
@@ -286,14 +294,18 @@ static NSString *const kFontName = @"Helvetica Neue";
     CGRect mediaBox = self.mediaBox;
     CFDataRef mediaBoxData = CFDataCreate(kCFAllocatorDefault, (UInt8 *)&mediaBox, sizeof(mediaBox));
     CFDictionarySetValue(info, kCGPDFContextMediaBox, mediaBoxData);
+    CFRelease(mediaBoxData);
     
     CGRect bleedBox = self.bleedBox;
     CFDataRef bleedBoxData = CFDataCreate(kCFAllocatorDefault, (UInt8 *)&bleedBox, sizeof(bleedBox));
     CFDictionarySetValue(info, kCGPDFContextMediaBox, bleedBoxData);
+    CFRelease(bleedBoxData);
     
     CGRect trimBox = self.trimBox;
     CFDataRef trimBoxData = CFDataCreate(kCFAllocatorDefault, (UInt8 *)&trimBox, sizeof(trimBox));
     CFDictionarySetValue(info, kCGPDFContextTrimBox, trimBoxData);
+    CFRelease(trimBoxData);
+    
     return info;
 }
 
