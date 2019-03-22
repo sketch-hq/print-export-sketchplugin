@@ -13,6 +13,9 @@
 
 @property (readonly, nonatomic) PEExportType exportType;
 @property (readonly, nonatomic) PEScope scope;
+@property (readonly, nonatomic) BOOL showArboardBorder;
+@property (readonly, nonatomic) BOOL showArboardName;
+@property (readonly, nonatomic) BOOL showPrototypingLinks;
 @property (readonly, nonatomic) CGSize pageSize;
 @property (readonly, nonatomic) BOOL includeCropMarks;
 @property (readonly, nonatomic) CGFloat bleed;

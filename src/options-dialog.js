@@ -9,9 +9,9 @@ module.exports = class OptionsDialog {
   constructor(pluginName, model, context) {
     this.nib = loadNib('PEOptionsAccessoryView')
 
-    const exportTypeHandler = function() {}
-    this.nib.artboardPerPage.setCOSJSTargetFunction(exportTypeHandler)
-    this.nib.sketchPagePerPage.setCOSJSTargetFunction(exportTypeHandler)
+    this.exportTypeChanged = this.exportTypeChanged.bind(this)
+    this.nib.artboardPerPage.setCOSJSTargetFunction(this.exportTypeChanged)
+    this.nib.sketchPagePerPage.setCOSJSTargetFunction(this.exportTypeChanged)
     switch (model.exportType) {
       case ExportType.ArtboardPerPage:
         this.nib.artboardPerPage.state = NSOnState
@@ -21,6 +21,7 @@ module.exports = class OptionsDialog {
         this.nib.sketchPagePerPage.state = NSOnState
         break;
     }
+    this.exportTypeChanged()
 
     const scopeHandler = function() {}
     this.nib.exportCurrentPage.setCOSJSTargetFunction(scopeHandler)
@@ -34,6 +35,10 @@ module.exports = class OptionsDialog {
         this.nib.exportAllPages.state = NSOnState
         break;
     }
+
+    this.nib.showArtboardBorder.state = model.showArtboardBorder ? NSOnState : NSOffState
+    this.nib.showArtboardName.state = model.showArtboardName ? NSOnState : NSOffState
+    this.nib.showPrototypingLinks.state = model.showPrototypingLinks ? NSOnState : NSOffState
 
     let currentPaperSizeStandard
     for (let [index, paperSizeStandard] of paperSizeStandards.entries()) {
@@ -73,6 +78,10 @@ module.exports = class OptionsDialog {
     this.nib.slug.doubleValue = model.slug
 
     this.dialog = buildDialog(pluginName, 'Export', this.nib.rootView, context)
+  }
+
+  exportTypeChanged() {
+    this.nib.showPrototypingLinks.enabled = this.exportType === ExportType.SketchPagePerPage
   }
 
   paperSizeStandardChanged(sender) {
@@ -138,6 +147,18 @@ module.exports = class OptionsDialog {
 
   get scope() {
     return this.nib.exportCurrentPage.state() === NSOnState ? Scope.CurrentPage : Scope.AllPages
+  }
+
+  get showArtboardBorder() {
+    return this.nib.showArtboardBorder.state() === NSOnState
+  }
+
+  get showArtboardName() {
+    return this.nib.showArtboardName.state() === NSOnState
+  }
+
+  get showPrototypingLinks() {
+    return this.nib.showPrototypingLinks.state() === NSOnState
   }
 
   get paperSizeStandard() {

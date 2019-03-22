@@ -11,6 +11,9 @@
 
 static NSString *const kOptionKeyExportType = @"exportType";
 static NSString *const kOptionKeyScope = @"scope";
+static NSString *const kOptionKeyShowArtboardBorder = @"showArtboardBorder";
+static NSString *const kOptionKeyShowArtboardName = @"showArtboardName";
+static NSString *const kOptionKeyShowPrototypingLinks = @"showPrototypingLinks";
 static NSString *const kOptionKeyPageWidth = @"pageWidth";
 static NSString *const kOptionKeyPageHeight = @"pageHeight";
 static NSString *const kOptionKeyIncludeCropMarks = @"includeCropMarks";
@@ -24,6 +27,9 @@ static NSString *const kOptionKeySlug = @"slug";
         NSArray<NSString*> *requiredOptionKeys = @[
                                                    kOptionKeyExportType,
                                                    kOptionKeyScope,
+                                                   kOptionKeyShowArtboardBorder,
+                                                   kOptionKeyShowArtboardName,
+                                                   kOptionKeyShowPrototypingLinks,
                                                    kOptionKeyPageWidth,
                                                    kOptionKeyPageHeight,
                                                    kOptionKeyIncludeCropMarks,
@@ -36,6 +42,9 @@ static NSString *const kOptionKeySlug = @"slug";
         }
         _exportType = (PEExportType)((NSNumber*)options[kOptionKeyExportType]).unsignedIntegerValue;
         _scope = (PEScope)((NSNumber*)options[kOptionKeyScope]).unsignedIntegerValue;
+        _showArboardBorder = ((NSNumber*)options[kOptionKeyShowArtboardBorder]).boolValue;
+        _showArboardName = ((NSNumber*)options[kOptionKeyShowArtboardName]).boolValue;
+        _showPrototypingLinks = ((NSNumber*)options[kOptionKeyShowPrototypingLinks]).boolValue;
         _pageSize = CGSizeMake(PEMMToUnit(((NSNumber*)options[kOptionKeyPageWidth]).doubleValue), PEMMToUnit(((NSNumber*)options[kOptionKeyPageHeight]).doubleValue));
         _includeCropMarks = ((NSNumber*)options[kOptionKeyIncludeCropMarks]).boolValue;
         _bleed = PEMMToUnit(((NSNumber*)options[kOptionKeyBleed]).doubleValue);

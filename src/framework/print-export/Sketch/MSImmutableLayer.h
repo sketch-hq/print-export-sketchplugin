@@ -11,5 +11,6 @@
 @interface MSImmutableLayer : MSImmutableModelObject
 
 @property (readonly, nonatomic) CGRect rect;
+@property (readonly, copy, nonatomic) NSString *name;
 
 @end

@@ -16,7 +16,8 @@
 
 // millimeters
 static const CGFloat kCropMarkLength = 5;
-static const CGFloat kMinimumPageMargin = 20;
+static const CGFloat kPageMargin = 20;
+static NSString *const kFontName = @"Helvetica Neue";
 
 @interface PEPrintExport()
 
@@ -30,7 +31,8 @@ static const CGFloat kMinimumPageMargin = 20;
 @property (readonly, nonatomic) CGRect trimBox;
 @property (readonly, nonatomic) CGFloat slugBleed;
 @property (readonly, nonatomic) CGFloat cropMarkLength;
-@property (readonly, nonatomic) CGFloat artboardPageMargin;
+@property (readonly, nonatomic) CGFloat pageMargin;
+@property (readonly, nonatomic) CGSize maxPageSize;
 
 @end
 
@@ -73,8 +75,9 @@ static const CGFloat kMinimumPageMargin = 20;
         _options = options;
         _symbolsPageID = [document.documentData symbolsPage].objectID;
         _auxiliaryInfo = [self buildAuxiliaryInfoWithOptions:self.options];
-        _artboardPageMargin = PEMMToUnit(kMinimumPageMargin);
+        _pageMargin = PEMMToUnit(kPageMargin);
         _slugBleed = self.options.slug + self.options.bleed;
+        _maxPageSize = CGSizeMake(self.options.pageSize.width - (self.pageMargin * 2), self.options.pageSize.height - (self.pageMargin * 2));
     }
     return self;
 }
@@ -103,7 +106,26 @@ static const CGFloat kMinimumPageMargin = 20;
 }
 
 - (void)generateSketchPagePerPage {
-    
+    CGRect mediaBox = self.mediaBox;
+    CGContextRef ctx = CGPDFContextCreateWithURL((__bridge CFURLRef)self.fileURL, &mediaBox, self.auxiliaryInfo);
+    if (!ctx) {
+        NSLog(@"Couldn't create PDF context");
+        return;
+    }
+    switch (self.options.scope) {
+        case PEScopeAllPages:
+            for (MSImmutablePage *page in self.documentData.pages) {
+                if (![page.objectID isEqualToString:self.symbolsPageID]) {
+                    [self generateSketchPageWithPage:page context:ctx];
+                }
+            }
+            break;
+            
+        case PEScopeCurrentPage:
+            [self generateSketchPageWithPage:self.documentData.currentPage context:ctx];
+            break;
+    }
+    CGContextRelease(ctx);
 }
 
 # pragma mark - Private
@@ -135,13 +157,10 @@ static const CGFloat kMinimumPageMargin = 20;
         CGContextBeginPage(ctx, NULL);
         CGContextSaveGState(ctx);
         if (self.options.hasCropMarks) {
-            [self generateCropMarksWithContext:ctx];
+            [self drawCropMarksWithContext:ctx];
         }
-        // Artboard
-        CGPDFDocumentRef artboardPDF = [PEUtils PDFOfArtboard:artboard documentData:self.documentData];
-        CGPDFPageRef pdfPage = CGPDFDocumentGetPage(artboardPDF, 1);
-        CGSize boundingSize = CGSizeMake(self.options.pageSize.width - (self.artboardPageMargin * 2), self.options.pageSize.height - (self.artboardPageMargin * 2));
-        CGSize targetSize = [PEUtils fitSize:artboard.rect.size inSize:boundingSize];
+        CGPDFPageRef pdfPage = [PEUtils PDFPageOfArtboard:artboard documentData:self.documentData];
+        CGSize targetSize = [PEUtils fitSize:artboard.rect.size inSize:self.maxPageSize];
         CGRect artboardPDFRect = CGPDFPageGetBoxRect(pdfPage, kCGPDFCropBox);
         CGContextSaveGState(ctx);
         CGRect targetRect = CGRectMake((self.mediaBox.size.width - targetSize.width) / 2.0, (self.mediaBox.size.height - targetSize.height) / 2.0, targetSize.width, targetSize.height);
@@ -149,19 +168,48 @@ static const CGFloat kMinimumPageMargin = 20;
         CGContextScaleCTM(ctx, targetSize.width / artboardPDFRect.size.width, targetSize.height / artboardPDFRect.size.height);
         CGContextDrawPDFPage(ctx, pdfPage);
         CGContextRestoreGState(ctx);
-        if (!artboard.hasBackgroundColor || !artboard.includeBackgroundColorInExport || (artboard.includeBackgroundColorInExport && [PEUtils colorIsWhite:artboard.backgroundColor])) {
-            // Artboard border
-            CGContextSetLineWidth(ctx, 0.5);
-            CGContextSetCMYKStrokeColor(ctx, 0, 0, 0, 0.5, 1);
-            CGContextStrokeRect(ctx, targetRect);
+        if (self.options.showArboardBorder) {
+            [self drawArtboardBorderWithArtboard:artboard rect:targetRect context:ctx];
+        }
+        if (self.options.showArboardName) {
+            [self drawLabel:artboard.name position:CGPointMake(targetRect.origin.x + targetRect.size.width / 2.0, targetRect.origin.y - 30) size:12 context:ctx];
         }
         CGContextRestoreGState(ctx);
         CGContextEndPage(ctx);
     }
 }
 
+- (void)generateSketchPageWithPage:(MSImmutablePage*)page context:(CGContextRef)ctx {
+    CGContextBeginPage(ctx, NULL);
+    CGContextSaveGState(ctx);
+    if (self.options.hasCropMarks) {
+        [self drawCropMarksWithContext:ctx];
+    }
+    CGRect artboardsRect = [self boundsOfArtboardsInPage:page];
+    CGSize targetSize = [PEUtils fitSize:artboardsRect.size inSize:self.maxPageSize];
+    CGFloat scale = targetSize.width / artboardsRect.size.width;
+    CGPoint origin = CGPointMake((self.mediaBox.size.width - targetSize.width) / 2.0, (self.mediaBox.size.height - targetSize.height) / 2.0);
+    CGContextTranslateCTM(ctx, origin.x, origin.y);
+    for (MSImmutableArtboardGroup *artboard in page.artboards) {
+        CGPDFPageRef pdfPage = [PEUtils PDFPageOfArtboard:artboard documentData:self.documentData];
+        CGRect artboardPDFRect = CGPDFPageGetBoxRect(pdfPage, kCGPDFCropBox);
+        CGContextSaveGState(ctx);
+        CGContextScaleCTM(ctx, (artboard.rect.size.width * scale) / artboardPDFRect.size.width, (artboard.rect.size.height * scale) / artboardPDFRect.size.height);
+        CGContextTranslateCTM(ctx, artboard.rect.origin.x - artboardsRect.origin.x, artboardsRect.size.height - (artboard.rect.origin.y - artboardsRect.origin.y + artboard.rect.size.height));
+        CGContextDrawPDFPage(ctx, pdfPage);
+        if (self.options.showArboardBorder) {
+            [self drawArtboardBorderWithArtboard:artboard rect:CGRectMake(0, 0, artboard.rect.size.width, artboard.rect.size.height) context:ctx];
+        }
+        if (self.options.showArboardName) {
+            [self drawLabel:artboard.name position:CGPointMake(artboard.rect.size.width / 2.0, -40) size:18 context:ctx];
+        }
+        CGContextRestoreGState(ctx);
+    }
+    CGContextRestoreGState(ctx);
+    CGContextEndPage(ctx);
+}
 
-- (void)generateCropMarksWithContext:(CGContextRef)ctx {
+- (void)drawCropMarksWithContext:(CGContextRef)ctx {
     CGContextSaveGState(ctx);
     CGFloat x0 = self.options.slug;
     CGFloat x1 = self.options.slug + self.options.bleed;
@@ -201,6 +249,29 @@ static const CGFloat kMinimumPageMargin = 20;
     CGContextStrokeLineSegments(ctx, points, 16);
 }
 
+- (void)drawArtboardBorderWithArtboard:(MSImmutableArtboardGroup*)artboard rect:(CGRect)artboardRect context:(CGContextRef)ctx {
+    CGContextSetLineWidth(ctx, 0.5);
+    CGContextSetCMYKStrokeColor(ctx, 0, 0, 0, 0.5, 1);
+    CGContextStrokeRect(ctx, artboardRect);
+}
+
+- (void)drawLabel:(NSString*)label position:(CGPoint)position size:(CGFloat)size context:(CGContextRef)ctx {
+    CTFontRef font = CTFontCreateWithName((__bridge CFStringRef)kFontName, size, NULL);
+    CFStringRef keys[] = {kCTFontAttributeName};
+    CFTypeRef values[] = {font};
+    CFDictionaryRef attributes = CFDictionaryCreate(kCFAllocatorDefault, (const void**)&keys, (const void**)&values, sizeof(keys) / sizeof(keys[0]),
+                                                    &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    CFAttributedStringRef attrString = CFAttributedStringCreate(kCFAllocatorDefault, (__bridge CFStringRef)label, attributes);
+    CFRelease(attributes);
+    CTLineRef line = CTLineCreateWithAttributedString(attrString);
+    CFRelease(attrString);
+    CGRect lineBounds = CTLineGetImageBounds(line, ctx);
+    CGContextSetTextPosition(ctx, position.x - lineBounds.size.width / 2.0, position.y);
+    CTLineDraw(line, ctx);
+    CFRelease(line);
+    CFRelease(font);
+}
+
 - (void)flipContextVertically:(CGContextRef)ctx {
     CGContextConcatCTM(ctx, CGAffineTransformMake(1, 0, 0, -1, 0, self.mediaBox.size.height));
 }
@@ -210,25 +281,39 @@ static const CGFloat kMinimumPageMargin = 20;
     _bleedBox = CGRectMake(self.options.slug, self.options.slug, self.options.pageSize.width + (self.options.bleed * 2), self.options.pageSize.height + (self.options.bleed * 2));
     _trimBox = CGRectMake(self.options.slug + self.options.bleed, self.options.slug + self.options.bleed, self.options.pageSize.width, self.options.pageSize.height);
     
-    CFMutableDictionaryRef info = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    CFMutableDictionaryRef info = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     
     CGRect mediaBox = self.mediaBox;
-    CFDataRef mediaBoxData = CFDataCreate(NULL, (UInt8 *)&mediaBox, sizeof(mediaBox));
+    CFDataRef mediaBoxData = CFDataCreate(kCFAllocatorDefault, (UInt8 *)&mediaBox, sizeof(mediaBox));
     CFDictionarySetValue(info, kCGPDFContextMediaBox, mediaBoxData);
     
     CGRect bleedBox = self.bleedBox;
-    CFDataRef bleedBoxData = CFDataCreate(NULL, (UInt8 *)&bleedBox, sizeof(bleedBox));
+    CFDataRef bleedBoxData = CFDataCreate(kCFAllocatorDefault, (UInt8 *)&bleedBox, sizeof(bleedBox));
     CFDictionarySetValue(info, kCGPDFContextMediaBox, bleedBoxData);
     
     CGRect trimBox = self.trimBox;
-    CFDataRef trimBoxData = CFDataCreate(NULL, (UInt8 *)&trimBox, sizeof(trimBox));
+    CFDataRef trimBoxData = CFDataCreate(kCFAllocatorDefault, (UInt8 *)&trimBox, sizeof(trimBox));
     CFDictionarySetValue(info, kCGPDFContextTrimBox, trimBoxData);
     return info;
 }
 
-/*- (CGSize)sizeOfArtboardsInPage:(MSPage*)page {
+- (CGRect)boundsOfArtboardsInPage:(MSImmutablePage *)page {
     NSNumber *minX, *minY, *maxX, *maxY;
-    
-}*/
+    for (MSImmutableArtboardGroup *artboard in page.artboards) {
+        if (minX == nil || artboard.rect.origin.x < minX.doubleValue) {
+            minX = [NSNumber numberWithDouble:artboard.rect.origin.x];
+        }
+        if (minY == nil || artboard.rect.origin.y < minY.doubleValue) {
+            minY = [NSNumber numberWithDouble:artboard.rect.origin.y];
+        }
+        if (maxX == nil || artboard.rect.origin.x + artboard.rect.size.width > maxX.doubleValue) {
+            maxX = [NSNumber numberWithDouble:artboard.rect.origin.x + artboard.rect.size.width];
+        }
+        if (maxY == nil || artboard.rect.origin.y + artboard.rect.size.height > maxY.doubleValue) {
+            maxY = [NSNumber numberWithDouble:artboard.rect.origin.y + artboard.rect.size.height];
+        }
+    }
+    return CGRectMake(minX.doubleValue, minY.doubleValue, maxX.doubleValue - minX.doubleValue, maxY.doubleValue - minY.doubleValue);
+}
 
 @end

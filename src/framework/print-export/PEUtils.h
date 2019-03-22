@@ -16,8 +16,7 @@ extern CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat he
 
 @interface PEUtils : NSObject
 
-+ (CGPDFDocumentRef)PDFOfArtboard:(MSImmutableArtboardGroup *)artboard documentData:(MSImmutableDocumentData *)documentData;
++ (CGPDFPageRef)PDFPageOfArtboard:(MSImmutableArtboardGroup *)artboard documentData:(MSImmutableDocumentData *)documentData;
 + (CGSize)fitSize:(CGSize)sourceSize inSize:(CGSize)targetSize;
-+ (BOOL)colorIsWhite:(id<MSColor>)color;
 
 @end

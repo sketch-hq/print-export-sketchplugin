@@ -11,8 +11,4 @@
 
 @interface MSImmutableArtboardGroup: MSImmutableLayerGroup
 
-@property (readonly, nonatomic) BOOL hasBackgroundColor;
-@property (readonly, nonatomic) MSImmutableColor *backgroundColor;
-@property (readonly, nonatomic) BOOL includeBackgroundColorInExport;
-
 @end
