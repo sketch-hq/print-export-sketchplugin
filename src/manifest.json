@@ -1,0 +1,20 @@
+{
+  "compatibleVersion": 3,
+  "bundleVersion": 1,
+  "icon": "icon.png",
+  "identifier": "com.sketch.print-export",
+  "description": "Exports a PDF for printing",
+  "commands": [
+    {
+      "name": "Print Export",
+      "identifier": "print-export",
+      "script": "./command.js"
+    }
+  ],
+  "menu": {
+    "isRoot": true,
+    "items": [
+      "print-export"
+    ]
+  }
+}

@@ -1,0 +1,429 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4DA18CB4224399DE00D19222 /* PEOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DA18CB2224399DE00D19222 /* PEOptions.h */; };
+		4DA18CB5224399DE00D19222 /* PEOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA18CB3224399DE00D19222 /* PEOptions.m */; };
+		4DA18CBC2243ABD100D19222 /* NSDecimalFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DA18CBA2243ABD100D19222 /* NSDecimalFormatter.h */; };
+		4DA18CBD2243ABD100D19222 /* NSDecimalFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA18CBB2243ABD100D19222 /* NSDecimalFormatter.m */; };
+		4DA18CC62243EF5D00D19222 /* PEUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DA18CC42243EF5D00D19222 /* PEUtils.h */; };
+		4DA18CC72243EF5D00D19222 /* PEUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA18CC52243EF5D00D19222 /* PEUtils.m */; };
+		4DA18CCF2243F0B600D19222 /* MSConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DA18CCD2243F0B600D19222 /* MSConstants.h */; };
+		4DA18CD02243F0B600D19222 /* MSConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA18CCE2243F0B600D19222 /* MSConstants.m */; };
+		4DA8CB3B2241369D00FC9D2D /* print_export.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DA8CB392241369D00FC9D2D /* print_export.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4DA8CB442241397F00FC9D2D /* PEPrintExport.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DA8CB422241397F00FC9D2D /* PEPrintExport.h */; };
+		4DA8CB452241397F00FC9D2D /* PEPrintExport.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA8CB432241397F00FC9D2D /* PEPrintExport.m */; };
+		4DA8CB69224150DF00FC9D2D /* PEOptionsAccessoryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DA8CB68224150DF00FC9D2D /* PEOptionsAccessoryView.xib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		4DA18CB2224399DE00D19222 /* PEOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PEOptions.h; sourceTree = "<group>"; };
+		4DA18CB3224399DE00D19222 /* PEOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PEOptions.m; sourceTree = "<group>"; };
+		4DA18CBA2243ABD100D19222 /* NSDecimalFormatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSDecimalFormatter.h; sourceTree = "<group>"; };
+		4DA18CBB2243ABD100D19222 /* NSDecimalFormatter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSDecimalFormatter.m; sourceTree = "<group>"; };
+		4DA18CC02243BB7F00D19222 /* MSDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSDocument.h; sourceTree = "<group>"; };
+		4DA18CC12243BBB000D19222 /* MSDocumentData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSDocumentData.h; sourceTree = "<group>"; };
+		4DA18CC22243BBD500D19222 /* MSModelObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSModelObject.h; sourceTree = "<group>"; };
+		4DA18CC32243BC4400D19222 /* MSPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSPage.h; sourceTree = "<group>"; };
+		4DA18CC42243EF5D00D19222 /* PEUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PEUtils.h; sourceTree = "<group>"; };
+		4DA18CC52243EF5D00D19222 /* PEUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PEUtils.m; sourceTree = "<group>"; };
+		4DA18CCD2243F0B600D19222 /* MSConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSConstants.h; sourceTree = "<group>"; };
+		4DA18CCE2243F0B600D19222 /* MSConstants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MSConstants.m; sourceTree = "<group>"; };
+		4DA18CD12243F13400D19222 /* MSImmutableLayerAncestry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSImmutableLayerAncestry.h; sourceTree = "<group>"; };
+		4DA18CD22243F16000D19222 /* MSExportRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSExportRequest.h; sourceTree = "<group>"; };
+		4DA18CD32243F18800D19222 /* MSLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSLayer.h; sourceTree = "<group>"; };
+		4DA18CD42243F20300D19222 /* MSExportManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSExportManager.h; sourceTree = "<group>"; };
+		4DA18CD52243F6CB00D19222 /* MSArtboardGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSArtboardGroup.h; sourceTree = "<group>"; };
+		4DA18CD62243F6F700D19222 /* MSLayerGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSLayerGroup.h; sourceTree = "<group>"; };
+		4DA18CD72243F72100D19222 /* MSStyledLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSStyledLayer.h; sourceTree = "<group>"; };
+		4DA18CD92244051100D19222 /* MSColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSColor.h; sourceTree = "<group>"; };
+		4DA18CDA2244059B00D19222 /* MSColor-Protocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MSColor-Protocol.h"; sourceTree = "<group>"; };
+		4DA8CB362241369D00FC9D2D /* print_export.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = print_export.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4DA8CB392241369D00FC9D2D /* print_export.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = print_export.h; sourceTree = "<group>"; };
+		4DA8CB3A2241369D00FC9D2D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4DA8CB422241397F00FC9D2D /* PEPrintExport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PEPrintExport.h; sourceTree = "<group>"; };
+		4DA8CB432241397F00FC9D2D /* PEPrintExport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PEPrintExport.m; sourceTree = "<group>"; };
+		4DA8CB68224150DF00FC9D2D /* PEOptionsAccessoryView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PEOptionsAccessoryView.xib; sourceTree = "<group>"; };
+		4DA8CB6A2242886500FC9D2D /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4DA8CB332241369D00FC9D2D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4DA8CB2C2241369C00FC9D2D = {
+			isa = PBXGroup;
+			children = (
+				4DA8CB382241369D00FC9D2D /* print-export */,
+				4DA8CB372241369D00FC9D2D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4DA8CB372241369D00FC9D2D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4DA8CB362241369D00FC9D2D /* print_export.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4DA8CB382241369D00FC9D2D /* print-export */ = {
+			isa = PBXGroup;
+			children = (
+				4DA8CB492241441400FC9D2D /* Sketch */,
+				4DA8CB392241369D00FC9D2D /* print_export.h */,
+				4DA8CB3A2241369D00FC9D2D /* Info.plist */,
+				4DA8CB422241397F00FC9D2D /* PEPrintExport.h */,
+				4DA8CB432241397F00FC9D2D /* PEPrintExport.m */,
+				4DA8CB68224150DF00FC9D2D /* PEOptionsAccessoryView.xib */,
+				4DA8CB6A2242886500FC9D2D /* types.h */,
+				4DA18CB2224399DE00D19222 /* PEOptions.h */,
+				4DA18CB3224399DE00D19222 /* PEOptions.m */,
+				4DA18CBA2243ABD100D19222 /* NSDecimalFormatter.h */,
+				4DA18CBB2243ABD100D19222 /* NSDecimalFormatter.m */,
+				4DA18CC42243EF5D00D19222 /* PEUtils.h */,
+				4DA18CC52243EF5D00D19222 /* PEUtils.m */,
+			);
+			path = "print-export";
+			sourceTree = "<group>";
+		};
+		4DA8CB492241441400FC9D2D /* Sketch */ = {
+			isa = PBXGroup;
+			children = (
+				4DA18CC02243BB7F00D19222 /* MSDocument.h */,
+				4DA18CC12243BBB000D19222 /* MSDocumentData.h */,
+				4DA18CC22243BBD500D19222 /* MSModelObject.h */,
+				4DA18CC32243BC4400D19222 /* MSPage.h */,
+				4DA18CCD2243F0B600D19222 /* MSConstants.h */,
+				4DA18CCE2243F0B600D19222 /* MSConstants.m */,
+				4DA18CD12243F13400D19222 /* MSImmutableLayerAncestry.h */,
+				4DA18CD22243F16000D19222 /* MSExportRequest.h */,
+				4DA18CD32243F18800D19222 /* MSLayer.h */,
+				4DA18CD42243F20300D19222 /* MSExportManager.h */,
+				4DA18CD52243F6CB00D19222 /* MSArtboardGroup.h */,
+				4DA18CD62243F6F700D19222 /* MSLayerGroup.h */,
+				4DA18CD72243F72100D19222 /* MSStyledLayer.h */,
+				4DA18CD92244051100D19222 /* MSColor.h */,
+				4DA18CDA2244059B00D19222 /* MSColor-Protocol.h */,
+			);
+			path = Sketch;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		4DA8CB312241369D00FC9D2D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4DA18CCF2243F0B600D19222 /* MSConstants.h in Headers */,
+				4DA18CBC2243ABD100D19222 /* NSDecimalFormatter.h in Headers */,
+				4DA18CB4224399DE00D19222 /* PEOptions.h in Headers */,
+				4DA8CB3B2241369D00FC9D2D /* print_export.h in Headers */,
+				4DA18CC62243EF5D00D19222 /* PEUtils.h in Headers */,
+				4DA8CB442241397F00FC9D2D /* PEPrintExport.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		4DA8CB352241369D00FC9D2D /* print-export */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4DA8CB3E2241369D00FC9D2D /* Build configuration list for PBXNativeTarget "print-export" */;
+			buildPhases = (
+				4DA8CB312241369D00FC9D2D /* Headers */,
+				4DA8CB322241369D00FC9D2D /* Sources */,
+				4DA8CB332241369D00FC9D2D /* Frameworks */,
+				4DA8CB342241369D00FC9D2D /* Resources */,
+				4DA8CB41224137F300FC9D2D /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "print-export";
+			productName = "print-export";
+			productReference = 4DA8CB362241369D00FC9D2D /* print_export.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4DA8CB2D2241369C00FC9D2D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1010;
+				ORGANIZATIONNAME = Sketch;
+				TargetAttributes = {
+					4DA8CB352241369D00FC9D2D = {
+						CreatedOnToolsVersion = 10.1;
+					};
+				};
+			};
+			buildConfigurationList = 4DA8CB302241369C00FC9D2D /* Build configuration list for PBXProject "print-export" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 4DA8CB2C2241369C00FC9D2D;
+			productRefGroup = 4DA8CB372241369D00FC9D2D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4DA8CB352241369D00FC9D2D /* print-export */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4DA8CB342241369D00FC9D2D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4DA8CB69224150DF00FC9D2D /* PEOptionsAccessoryView.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4DA8CB41224137F300FC9D2D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "FRAMEWORK=\"print_export.framework\"\nPLUGIN_FILENAME=\"print-export.sketchplugin\"\n\ncp -R $BUILT_PRODUCTS_DIR/$FRAMEWORK $SRCROOT/../../$PLUGIN_FILENAME/Contents/Resources/\n\nosascript -e 'quit app \"Sketch\"'\nsleep 4\nopen -a \"/Applications/Sketch.app\"\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4DA8CB322241369D00FC9D2D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4DA18CC72243EF5D00D19222 /* PEUtils.m in Sources */,
+				4DA8CB452241397F00FC9D2D /* PEPrintExport.m in Sources */,
+				4DA18CD02243F0B600D19222 /* MSConstants.m in Sources */,
+				4DA18CB5224399DE00D19222 /* PEOptions.m in Sources */,
+				4DA18CBD2243ABD100D19222 /* NSDecimalFormatter.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		4DA8CB3C2241369D00FC9D2D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		4DA8CB3D2241369D00FC9D2D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		4DA8CB3F2241369D00FC9D2D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "print-export/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sketch.print-export";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		4DA8CB402241369D00FC9D2D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "print-export/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sketch.print-export";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4DA8CB302241369C00FC9D2D /* Build configuration list for PBXProject "print-export" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4DA8CB3C2241369D00FC9D2D /* Debug */,
+				4DA8CB3D2241369D00FC9D2D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4DA8CB3E2241369D00FC9D2D /* Build configuration list for PBXNativeTarget "print-export" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4DA8CB3F2241369D00FC9D2D /* Debug */,
+				4DA8CB402241369D00FC9D2D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4DA8CB2D2241369C00FC9D2D /* Project object */;
+}
