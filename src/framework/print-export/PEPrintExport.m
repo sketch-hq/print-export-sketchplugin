@@ -23,12 +23,10 @@
 static const CGFloat kCropMarkLength = 5; // millimeters
 static const CGFloat kPageMargin = 20; // millimeters
 static NSString *const kFontName = @"Helvetica Neue";
-static const CGFloat kControlPointDistance = 200;
 static const CGFloat kConnectingEndPointOffset = 6;
 static const CGFloat kArrowLength = 10;
 static const CGFloat kArrowWidth = kArrowLength;
 static const CGFloat kStartCircleDiameter = 6;
-static const CGFloat kHotspotCornerRadius = 4;
 static const CGFloat kBackLineLength = 60;
 static const CGFloat kBackBoxSize = 17;
 static const CGFloat kBackBoxCornerRadius = 3;
@@ -38,7 +36,6 @@ static const CGFloat kCropMarkColor[] = {0, 0, 0, 1, 1};
 static const CGFloat kArtboardNameColor[] = {0, 0, 0, 0.4, 1};
 static const CGFloat kPrototypingLinkColor[] = {0, 0.38, 1, 0.04, 1};
 static const CGFloat kStartCircleFillColor[] = {0, 0, 0, 0, 1};
-static const CGFloat kHotspotColor[] = {0, 0.38, 1, 0.04, 0.3};
 static const CGFloat kArtboardShadowBlur = 5;
 static const CGFloat kArtboardMinShadowBlur = 1;
 static const CGFloat kArtboardShadowColor[] = {0, 0, 0, 1, 0.5};
@@ -344,13 +341,6 @@ static const CGFloat kArtboardShadowColor[] = {0, 0, 0, 1, 0.5};
             CGRect sourceRect = CGRectMake(artboard.rect.origin.x - artboardsOrigin.x + flowConnection.frame.origin.x,
                                            artboard.rect.origin.y - artboardsOrigin.y + flowConnection.frame.origin.y,
                                            flowConnection.frame.size.width, flowConnection.frame.size.height);
-            if (flowConnection.type == PEFlowConnectionTypeHotspot) {
-                // hotspot
-                [self createRoundedRectanglePathWithRect:sourceRect radius:kHotspotCornerRadius context:ctx];
-                CGContextSetFillColor(ctx, kHotspotColor);
-                CGContextDrawPath(ctx, kCGPathFillStroke);
-            }
-            
             CGPoint startPoint;
             if (flowConnection.destinationArtboardID != nil) {
                 CGRect destinationRect = CGRectMake(destinationArtboard.rect.origin.x - artboardsOrigin.x,
@@ -478,23 +468,6 @@ static const CGFloat kArtboardShadowColor[] = {0, 0, 0, 1, 0.5};
             
         case PESideBottom:
             return CGPointMake(connectedPoint.point.x, connectedPoint.point.y + length);
-    }
-}
-
-- (CGPoint)getControlPointWithConnectedPoint:(PEConnectedPoint)connectedPoint point:(CGPoint)point deltaX:(CGFloat)deltaX deltaY:(CGFloat)deltaY {
-    if (connectedPoint.side == PESideLeft || connectedPoint.side == PESideRight) {
-        
-        if (connectedPoint.point.x < point.x) {
-            return NSMakePoint(connectedPoint.point.x + kControlPointDistance, connectedPoint.point.y);
-        } else {
-            return NSMakePoint(connectedPoint.point.x - kControlPointDistance, connectedPoint.point.y);
-        }
-    } else {
-        if (connectedPoint.point.y < point.y) {
-            return NSMakePoint(connectedPoint.point.x, connectedPoint.point.y + kControlPointDistance);
-        } else {
-            return NSMakePoint(connectedPoint.point.x, connectedPoint.point.y - kControlPointDistance);
-        }
     }
 }
 
