@@ -28,12 +28,10 @@ static const CGFloat kWhiteColor[] = {0, 0, 0, 0, 1};
 static const CGFloat kCropMarkColor[] = {0, 0, 0, 1, 1};
 static const CGFloat kArtboardNameColor[] = {0, 0, 0, 0.4, 1};
 static const CGFloat kPrototypingLinkColor[] = {0, 0.38, 1, 0.04, 1};
-
 static const CGFloat kStartCircleFillColor[] = {0, 0, 0, 0, 1};
-static const CGFloat kArtboardShadowBlur = 5;
+static const CGFloat kArtboardShadowBlur = 4;
 static const CGFloat kArtboardMinShadowBlur = 1;
 static const CGFloat kArtboardShadowColor[] = {0, 0, 0, 1, 0.5};
-
 static const CGSize kArrowSize = {.width = 5, .height = 5};
 static const CGFloat kConnectingEndPointOffset = 2;
 static const CGFloat kStartCircleDiameter = 3;
@@ -226,6 +224,14 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
 }
 
 - (void)generateSketchPageWithPage:(MSImmutablePage*)page context:(CGContextRef)ctx {
+    NSDictionary<NSString *, NSArray<PEFlowConnection *> *> *flowConnectionsByArtboardID = nil;
+    NSArray<MSImmutableArtboardGroup *> *sortedArtboards = nil;
+    if (self.options.showPrototypingLinks) {
+        flowConnectionsByArtboardID = [self buildFlowConnectionsWithPage:page];
+        sortedArtboards = [self sortedArtboardsForSketchPageWithPage:page flowConnectionsByArtboardID:flowConnectionsByArtboardID];
+    } else {
+        sortedArtboards = page.artboards;
+    }
     CGContextBeginPage(ctx, NULL);
     [self setColorSpaceWithContext:ctx];
     CGContextSaveGState(ctx);
@@ -237,7 +243,7 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
     CGPoint origin = CGPointMake((self.mediaBox.size.width - targetSize.width) / 2.0, (self.mediaBox.size.height - targetSize.height) / 2.0);
     CGContextTranslateCTM(ctx, origin.x, origin.y);
     CGFloat scale = targetSize.width / artboardsRect.size.width;
-    for (MSImmutableArtboardGroup *artboard in page.artboards) {
+    for (MSImmutableArtboardGroup *artboard in sortedArtboards) {
         CGPDFDocumentRef artboardPDF = [PEUtils createPDFPageOfArtboard:artboard documentData:self.immutableDocumentData];
         CGPDFPageRef artboardPDFPage = CGPDFDocumentGetPage(artboardPDF, 1);
         CGContextSaveGState(ctx);
@@ -248,16 +254,44 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
         }
         CGContextDrawPDFPage(ctx, artboardPDFPage);
         CFRelease(artboardPDF);
-        if (self.options.showArboardName) {
-            [self drawLabel:artboard.name position:CGPointMake(artboard.rect.size.width / 2.0, -40) size:22 context:ctx];
-        }
         CGContextRestoreGState(ctx);
-    }
-    if (self.options.showPrototypingLinks) {
-        [self drawPrototypingLinksWithPage:page artboardsRect:artboardsRect scale:scale context:ctx];
+        if (self.options.showPrototypingLinks) {
+            [self drawPrototypingLinksWithArtboard:artboard flowConnectionsByArtboardID:flowConnectionsByArtboardID artboardsRect:artboardsRect scale:scale context:ctx];
+        }
+        if (self.options.showArboardName) {
+            CGPoint position = [PEUtils PDFPointWithAbsPoint:CGPointMake(artboard.rect.origin.x + artboard.rect.size.width / 2.0, artboard.rect.origin.y + artboard.rect.size.height + 40)
+                                               artboardsRect:artboardsRect scale:scale];
+            [self drawLabel:artboard.name position:position size:22 * scale context:ctx];
+        }
     }
     CGContextRestoreGState(ctx);
     CGContextEndPage(ctx);
+}
+
+- (NSArray<MSImmutableArtboardGroup *> *)sortedArtboardsForSketchPageWithPage:(MSImmutablePage *)page
+                                                  flowConnectionsByArtboardID:(NSDictionary<NSString *, NSArray *> *)flowConnectionsByArtboardID {
+    return [page.artboards sortedArrayUsingComparator:^(MSImmutableArtboardGroup *artboard1, MSImmutableArtboardGroup *artboard2) {
+        BOOL artboard1HasPrototypingLinks = flowConnectionsByArtboardID[artboard1.objectID].count > 0;
+        BOOL artboard2HasPrototypingLinks = flowConnectionsByArtboardID[artboard2.objectID].count > 0;
+        if (artboard1HasPrototypingLinks && !artboard2HasPrototypingLinks) {
+            return NSOrderedAscending;
+        } else if (!artboard1HasPrototypingLinks && artboard2HasPrototypingLinks) {
+            return NSOrderedDescending;
+        } else {
+            if (artboard1.rect.origin.y < artboard2.rect.origin.y) {
+                return NSOrderedAscending;
+            } else if (artboard1.rect.origin.y > artboard2.rect.origin.y) {
+                return NSOrderedDescending;
+            } else {
+                if (artboard1.rect.origin.x < artboard2.rect.origin.x) {
+                    return NSOrderedAscending;
+                } else if (artboard1.rect.origin.x > artboard2.rect.origin.x) {
+                    return NSOrderedDescending;
+                }
+            }
+        }
+        return NSOrderedSame;
+    }];
 }
 
 - (void)drawCropMarksWithContext:(CGContextRef)ctx {
@@ -330,80 +364,78 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
     CFRelease(font);
 }
 
-- (void)drawPrototypingLinksWithPage:(MSImmutablePage *)page artboardsRect:(CGRect)artboardsRect scale:(CGFloat)scale context:(CGContextRef)ctx {
-    NSDictionary<NSString *, NSArray<PEFlowConnection *> *> *flowConnectionsByArtboardID = [self buildFlowConnectionsWithPage:page];
-    
+- (void)drawPrototypingLinksWithArtboard:(MSImmutableArtboardGroup *)artboard flowConnectionsByArtboardID:(NSDictionary<NSString *, NSArray<PEFlowConnection *> *> *)flowConnectionsByArtboardID artboardsRect:(CGRect)artboardsRect scale:(CGFloat)scale context:(CGContextRef)ctx {
+    NSArray<PEFlowConnection *> *flowConnections = flowConnectionsByArtboardID[artboard.objectID];
+    if (flowConnections.count == 0) {
+        return;
+    }
     CGContextSaveGState(ctx);
-    CGContextConcatCTM(ctx, CGAffineTransformMake(1, 0, 0, -1, 0, artboardsRect.size.height * scale));
     CGContextSetLineWidth(ctx, kPrototypingLinkWidth);
     CGContextSetStrokeColor(ctx, kPrototypingLinkColor);
-    for (MSImmutableArtboardGroup *artboard in page.artboards) {
-        NSArray<PEFlowConnection *> *flowConnections = flowConnectionsByArtboardID[artboard.objectID];
-        for (PEFlowConnection *flowConnection in flowConnections) {
-            MSImmutableArtboardGroup *destinationArtboard = (MSImmutableArtboardGroup *)[self layerWithID:flowConnection.destinationArtboardID];
-            CGRect sourceAbsRect = CGRectMake(artboard.rect.origin.x + flowConnection.frame.origin.x, artboard.rect.origin.y + flowConnection.frame.origin.y,
-                                              flowConnection.frame.size.width, flowConnection.frame.size.height);
-            CGRect sourceRect = [PEUtils PDFRectWithAbsRect:sourceAbsRect artboardsRect:artboardsRect scale:scale];
-            CGPoint startPoint;
-            if (flowConnection.destinationArtboardID != nil) {
-                PEConnectingLine connectingLine = [PEUtils connectingLineWithRect:sourceAbsRect withRect:destinationArtboard.rect];
-                startPoint = [PEUtils PDFPointWithAbsPoint:connectingLine.startPoint.point artboardsRect:artboardsRect scale:scale];
-                PEConnectedPoint pdfConnectedPoint = [PEUtils PDFConnectedPointWithAbsConnectedPoint:connectingLine.endPoint artboardsRect:artboardsRect scale:scale];
-                CGPoint endPoint = [PEUtils offsetPoint:pdfConnectedPoint.point side:connectingLine.endPoint.side offset:kConnectingEndPointOffset + kArrowSize.height];
-                
-                // curve
-                CGContextBeginPath(ctx);
-                CGContextMoveToPoint(ctx, startPoint.x, startPoint.y);
-                CGFloat deltaX = fabs(startPoint.x - connectingLine.endPoint.point.x);
-                CGFloat deltaY = fabs(startPoint.y - connectingLine.endPoint.point.y);
-                if (deltaX == 0 || deltaY == 0) {
-                    CGContextAddLineToPoint(ctx, endPoint.x, endPoint.y);
-                } else {
-                    CGFloat length = [PEUtils distanceBetweenPoint:startPoint andPoint:endPoint] / 3.0;
-                    CGPoint controlPoint1 = [self calculateControlPointWithPoint:startPoint side:connectingLine.startPoint.side length:length];
-                    CGPoint controlPoint2 = [self calculateControlPointWithPoint:endPoint side:connectingLine.endPoint.side length:length];
-                    CGContextAddCurveToPoint(ctx, controlPoint1.x, controlPoint1.y, controlPoint2.x, controlPoint2.y, endPoint.x, endPoint.y);
-                }
-                CGContextDrawPath(ctx, kCGPathStroke);
-                
-                // arrow
-                [self createArrowPathWithPoint:endPoint side:connectingLine.endPoint.side size:kArrowSize context:ctx];
-                CGContextSetFillColor(ctx, kPrototypingLinkColor);
-                CGContextDrawPath(ctx, kCGPathFill);
-            } else {
-                // previous artboard
-                startPoint = CGPointMake(sourceRect.origin.x, sourceRect.origin.y + sourceRect.size.height / 2.0);
-                
-                // line
-                CGContextBeginPath(ctx);
-                CGContextMoveToPoint(ctx, startPoint.x, startPoint.y);
-                CGPoint endPoint = CGPointMake(((artboard.rect.origin.x - artboardsRect.origin.x) * scale) - kBackBoxOffset, startPoint.y);
-                CGContextAddLineToPoint(ctx, endPoint.x, endPoint.y);
-                CGContextDrawPath(ctx, kCGPathStroke);
-                
-                // box
-                CGRect boxRect = CGRectMake(endPoint.x - kBackBoxSize, endPoint.y - (kBackBoxSize / 2.0), kBackBoxSize, kBackBoxSize);
-                [self createRoundedRectanglePathWithRect:boxRect radius:kBackBoxCornerRadius context:ctx];
-                CGContextSetFillColor(ctx, kPrototypingLinkColor);
-                CGContextDrawPath(ctx, kCGPathFill);
-                
-                // arrow
-                CGRect arrowRect = [PEUtils centerSize:kBackArrowSize inRect:boxRect];
-                CGContextBeginPath(ctx);
-                CGContextMoveToPoint(ctx, arrowRect.origin.x + arrowRect.size.width, arrowRect.origin.y);
-                CGContextAddLineToPoint(ctx, arrowRect.origin.x, arrowRect.origin.y + arrowRect.size.height / 2.0);
-                CGContextAddLineToPoint(ctx, arrowRect.origin.x + arrowRect.size.width, arrowRect.origin.y + arrowRect.size.height);
-                CGContextSetStrokeColor(ctx, kWhiteColor);
-                CGContextDrawPath(ctx, kCGPathStroke);
-            }
+    for (PEFlowConnection *flowConnection in flowConnections) {
+        MSImmutableArtboardGroup *destinationArtboard = (MSImmutableArtboardGroup *)[self layerWithID:flowConnection.destinationArtboardID];
+        CGRect sourceAbsRect = CGRectMake(artboard.rect.origin.x + flowConnection.frame.origin.x, artboard.rect.origin.y + flowConnection.frame.origin.y,
+                                          flowConnection.frame.size.width, flowConnection.frame.size.height);
+        CGRect sourceRect = [PEUtils PDFRectWithAbsRect:sourceAbsRect artboardsRect:artboardsRect scale:scale];
+        CGPoint startPoint;
+        if (flowConnection.destinationArtboardID != nil) {
+            PEConnectingLine connectingLine = [PEUtils connectingLineWithRect:sourceAbsRect withRect:destinationArtboard.rect];
+            startPoint = [PEUtils PDFPointWithAbsPoint:connectingLine.startPoint.point artboardsRect:artboardsRect scale:scale];
+            PEConnectedPoint pdfConnectedPoint = [PEUtils PDFConnectedPointWithAbsConnectedPoint:connectingLine.endPoint artboardsRect:artboardsRect scale:scale];
+            CGPoint endPoint = [PEUtils offsetPDFPoint:pdfConnectedPoint.point side:connectingLine.endPoint.side offset:kConnectingEndPointOffset + kArrowSize.height];
             
-            // start circle
+            // curve
             CGContextBeginPath(ctx);
-            CGContextAddEllipseInRect(ctx, [PEUtils makeRectWithMidpoint:startPoint size:kStartCircleDiameter]);
-            CGContextSetFillColor(ctx, kStartCircleFillColor);
-            CGContextSetStrokeColor(ctx, kPrototypingLinkColor);
-            CGContextDrawPath(ctx, kCGPathFillStroke);
+            CGContextMoveToPoint(ctx, startPoint.x, startPoint.y);
+            CGFloat deltaX = fabs(startPoint.x - connectingLine.endPoint.point.x);
+            CGFloat deltaY = fabs(startPoint.y - connectingLine.endPoint.point.y);
+            if (deltaX == 0 || deltaY == 0) {
+                CGContextAddLineToPoint(ctx, endPoint.x, endPoint.y);
+            } else {
+                CGFloat length = [PEUtils distanceBetweenPoint:startPoint andPoint:endPoint] / 3.0;
+                CGPoint controlPoint1 = [self calculateControlPointWithPoint:startPoint side:connectingLine.startPoint.side length:length];
+                CGPoint controlPoint2 = [self calculateControlPointWithPoint:endPoint side:connectingLine.endPoint.side length:length];
+                CGContextAddCurveToPoint(ctx, controlPoint1.x, controlPoint1.y, controlPoint2.x, controlPoint2.y, endPoint.x, endPoint.y);
+            }
+            CGContextDrawPath(ctx, kCGPathStroke);
+            
+            // arrow
+            [self createArrowPathWithPoint:endPoint side:connectingLine.endPoint.side size:kArrowSize context:ctx];
+            CGContextSetFillColor(ctx, kPrototypingLinkColor);
+            CGContextDrawPath(ctx, kCGPathFill);
+        } else {
+            // previous artboard
+            startPoint = CGPointMake(sourceRect.origin.x, sourceRect.origin.y + sourceRect.size.height / 2.0);
+            
+            // line
+            CGContextBeginPath(ctx);
+            CGContextMoveToPoint(ctx, startPoint.x, startPoint.y);
+            CGPoint endPoint = CGPointMake(((artboard.rect.origin.x - artboardsRect.origin.x) * scale) - kBackBoxOffset, startPoint.y);
+            CGContextAddLineToPoint(ctx, endPoint.x, endPoint.y);
+            CGContextDrawPath(ctx, kCGPathStroke);
+            
+            // box
+            CGRect boxRect = CGRectMake(endPoint.x - kBackBoxSize, endPoint.y - (kBackBoxSize / 2.0), kBackBoxSize, kBackBoxSize);
+            [self createRoundedRectanglePathWithRect:boxRect radius:kBackBoxCornerRadius context:ctx];
+            CGContextSetFillColor(ctx, kPrototypingLinkColor);
+            CGContextDrawPath(ctx, kCGPathFill);
+            
+            // arrow
+            CGRect arrowRect = [PEUtils centerSize:kBackArrowSize inRect:boxRect];
+            CGContextBeginPath(ctx);
+            CGContextMoveToPoint(ctx, arrowRect.origin.x + arrowRect.size.width, arrowRect.origin.y);
+            CGContextAddLineToPoint(ctx, arrowRect.origin.x, arrowRect.origin.y + arrowRect.size.height / 2.0);
+            CGContextAddLineToPoint(ctx, arrowRect.origin.x + arrowRect.size.width, arrowRect.origin.y + arrowRect.size.height);
+            CGContextSetStrokeColor(ctx, kWhiteColor);
+            CGContextDrawPath(ctx, kCGPathStroke);
         }
+        
+        // start circle
+        CGContextBeginPath(ctx);
+        CGContextAddEllipseInRect(ctx, [PEUtils makeRectWithMidpoint:startPoint size:kStartCircleDiameter]);
+        CGContextSetFillColor(ctx, kStartCircleFillColor);
+        CGContextSetStrokeColor(ctx, kPrototypingLinkColor);
+        CGContextDrawPath(ctx, kCGPathFillStroke);
     }
     CGContextRestoreGState(ctx);
 }
@@ -413,7 +445,7 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
     CGFloat angle = 0;
     switch (side) {
         case PESideTop:
-            angle = M_PI_2;
+            angle = -M_PI_2;
             break;
             
         case PESideRight:
@@ -421,7 +453,7 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
             break;
             
         case PESideBottom:
-            angle = -M_PI_2;
+            angle = M_PI_2;
             break;
             
         case PESideLeft:
@@ -466,10 +498,10 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
             return CGPointMake(point.x + length, point.y);
             
         case PESideTop:
-            return CGPointMake(point.x, point.y - length);
+            return CGPointMake(point.x, point.y + length);
             
         case PESideBottom:
-            return CGPointMake(point.x, point.y + length);
+            return CGPointMake(point.x, point.y - length);
     }
 }
 

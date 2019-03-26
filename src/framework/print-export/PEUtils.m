@@ -130,7 +130,7 @@ CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat height) {
 }
 
 + (CGPoint)PDFPointWithAbsPoint:(CGPoint)absPoint artboardsRect:(CGRect)artboardsRect scale:(CGFloat)scale {
-    return CGPointMake((absPoint.x - artboardsRect.origin.x) * scale, (absPoint.y - artboardsRect.origin.y) * scale);
+    return CGPointMake((absPoint.x - artboardsRect.origin.x) * scale, (artboardsRect.size.height - (absPoint.y - artboardsRect.origin.y)) * scale);
 }
 
 + (PEConnectedPoint)PDFConnectedPointWithAbsConnectedPoint:(PEConnectedPoint)absConnectedPoint artboardsRect:(CGRect)artboardsRect scale:(CGFloat)scale {
@@ -138,20 +138,20 @@ CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat height) {
 }
 
 + (CGRect)PDFRectWithAbsRect:(CGRect)absRect artboardsRect:(CGRect)artboardsRect scale:(CGFloat)scale {
-    return CGRectMake((absRect.origin.x - artboardsRect.origin.x) * scale, (absRect.origin.y - artboardsRect.origin.y) * scale,
-                      absRect.size.width * scale, absRect.size.height * scale);
+    return CGRectMake((absRect.origin.x - artboardsRect.origin.x) * scale, (artboardsRect.size.height - (absRect.origin.y - artboardsRect.origin.y)) * scale,
+                      absRect.size.width * scale, -absRect.size.height * scale);
 }
 
-+ (CGPoint)offsetPoint:(CGPoint)point side:(PESide)side offset:(CGFloat)offset {
++ (CGPoint)offsetPDFPoint:(CGPoint)point side:(PESide)side offset:(CGFloat)offset {
     switch (side) {
         case PESideTop:
-            return CGPointMake(point.x, point.y - offset);
+            return CGPointMake(point.x, point.y + offset);
             
         case PESideRight:
             return CGPointMake(point.x + offset, point.y);
             
         case PESideBottom:
-            return CGPointMake(point.x, point.y + offset);
+            return CGPointMake(point.x, point.y - offset);
             
         case PESideLeft:
             return CGPointMake(point.x - offset, point.y);
