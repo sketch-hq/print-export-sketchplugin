@@ -7,10 +7,12 @@
 //
 
 #import "MSImmutableModelObject.h"
+#import "MSImmutableFlowConnection.h"
 
 @interface MSImmutableLayer : MSImmutableModelObject
 
 @property (readonly, nonatomic) CGRect rect;
 @property (readonly, copy, nonatomic) NSString *name;
+@property (readonly, nonatomic) MSImmutableFlowConnection *flow;
 
 @end

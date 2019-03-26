@@ -15,8 +15,5 @@
 
 + (void)onShutdown:(NSDictionary *)context;
 + (void)generatePDFWithDocument:(MSDocument *)document filePath:(NSString *)filePath options:(NSDictionary *)options;
-- (instancetype)initWithDocument:(MSDocument*)document fileURL:(NSURL *)fileURL options:(PEOptions*)options;
-- (void)generateArtboardPerPage;
-- (void)generateSketchPagePerPage;
 
 @end

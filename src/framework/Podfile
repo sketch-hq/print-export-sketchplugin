@@ -1,0 +1,5 @@
+platform :osx, :deployment_target => "10.12"
+
+target "print-export" do
+	pod "NSLogger"
+end

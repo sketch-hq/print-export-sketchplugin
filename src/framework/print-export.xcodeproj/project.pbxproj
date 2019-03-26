@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		07798987ADDE94D11AA3E58D /* libPods-print-export.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B214E39896F61EE9287DCC38 /* libPods-print-export.a */; };
 		4DA18CB4224399DE00D19222 /* PEOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DA18CB2224399DE00D19222 /* PEOptions.h */; };
 		4DA18CB5224399DE00D19222 /* PEOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA18CB3224399DE00D19222 /* PEOptions.m */; };
 		4DA18CBC2243ABD100D19222 /* NSDecimalFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DA18CBA2243ABD100D19222 /* NSDecimalFormatter.h */; };
@@ -28,6 +29,9 @@
 		4DB8D6962244ED1100670BC0 /* MSImmutableLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB8D68E2244ED1100670BC0 /* MSImmutableLayer.h */; };
 		4DB8D6992244F4D700670BC0 /* MSModelObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB8D6982244F4D700670BC0 /* MSModelObject.h */; };
 		4DB8D69B2244F51D00670BC0 /* MSPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB8D69A2244F51D00670BC0 /* MSPage.h */; };
+		4DF78E702248DDC0004024B0 /* PEFlowConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DF78E6E2248DDC0004024B0 /* PEFlowConnection.h */; };
+		4DF78E712248DDC0004024B0 /* PEFlowConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF78E6F2248DDC0004024B0 /* PEFlowConnection.m */; };
+		4DF78E7A2248FB12004024B0 /* types.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF78E792248FB12004024B0 /* types.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +66,15 @@
 		4DB8D6972244F40E00670BC0 /* MSImmutableColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSImmutableColor.h; sourceTree = "<group>"; };
 		4DB8D6982244F4D700670BC0 /* MSModelObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSModelObject.h; sourceTree = "<group>"; };
 		4DB8D69A2244F51D00670BC0 /* MSPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSPage.h; sourceTree = "<group>"; };
+		4DF78E6E2248DDC0004024B0 /* PEFlowConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PEFlowConnection.h; sourceTree = "<group>"; };
+		4DF78E6F2248DDC0004024B0 /* PEFlowConnection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PEFlowConnection.m; sourceTree = "<group>"; };
+		4DF78E732248E2EF004024B0 /* MSImmutableHotspotLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSImmutableHotspotLayer.h; sourceTree = "<group>"; };
+		4DF78E742248ED7E004024B0 /* MSImmutableFlowConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSImmutableFlowConnection.h; sourceTree = "<group>"; };
+		4DF78E792248FB12004024B0 /* types.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = types.m; sourceTree = "<group>"; };
+		4DF78E7F22492AA7004024B0 /* MSLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSLayer.h; sourceTree = "<group>"; };
+		934C9379DCA27F4889B1A21D /* Pods-print-export.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-print-export.debug.xcconfig"; path = "Pods/Target Support Files/Pods-print-export/Pods-print-export.debug.xcconfig"; sourceTree = "<group>"; };
+		B214E39896F61EE9287DCC38 /* libPods-print-export.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-print-export.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F87F0855D9C588A6689F6891 /* Pods-print-export.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-print-export.release.xcconfig"; path = "Pods/Target Support Files/Pods-print-export/Pods-print-export.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07798987ADDE94D11AA3E58D /* libPods-print-export.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -80,6 +94,8 @@
 			children = (
 				4DA8CB382241369D00FC9D2D /* print-export */,
 				4DA8CB372241369D00FC9D2D /* Products */,
+				D23EC967961014BEFDEDA794 /* Pods */,
+				4EB2CB4465921F1AB2C069C0 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -94,19 +110,22 @@
 		4DA8CB382241369D00FC9D2D /* print-export */ = {
 			isa = PBXGroup;
 			children = (
-				4DA8CB492241441400FC9D2D /* Sketch */,
-				4DA8CB392241369D00FC9D2D /* print_export.h */,
 				4DA8CB3A2241369D00FC9D2D /* Info.plist */,
-				4DA8CB422241397F00FC9D2D /* PEPrintExport.h */,
-				4DA8CB432241397F00FC9D2D /* PEPrintExport.m */,
-				4DA8CB68224150DF00FC9D2D /* PEOptionsAccessoryView.xib */,
-				4DA8CB6A2242886500FC9D2D /* types.h */,
-				4DA18CB2224399DE00D19222 /* PEOptions.h */,
-				4DA18CB3224399DE00D19222 /* PEOptions.m */,
 				4DA18CBA2243ABD100D19222 /* NSDecimalFormatter.h */,
 				4DA18CBB2243ABD100D19222 /* NSDecimalFormatter.m */,
+				4DF78E6E2248DDC0004024B0 /* PEFlowConnection.h */,
+				4DF78E6F2248DDC0004024B0 /* PEFlowConnection.m */,
+				4DA18CB2224399DE00D19222 /* PEOptions.h */,
+				4DA18CB3224399DE00D19222 /* PEOptions.m */,
+				4DA8CB68224150DF00FC9D2D /* PEOptionsAccessoryView.xib */,
+				4DA8CB422241397F00FC9D2D /* PEPrintExport.h */,
+				4DA8CB432241397F00FC9D2D /* PEPrintExport.m */,
 				4DA18CC42243EF5D00D19222 /* PEUtils.h */,
 				4DA18CC52243EF5D00D19222 /* PEUtils.m */,
+				4DA8CB392241369D00FC9D2D /* print_export.h */,
+				4DA8CB492241441400FC9D2D /* Sketch */,
+				4DA8CB6A2242886500FC9D2D /* types.h */,
+				4DF78E792248FB12004024B0 /* types.m */,
 			);
 			path = "print-export";
 			sourceTree = "<group>";
@@ -114,8 +133,6 @@
 		4DA8CB492241441400FC9D2D /* Sketch */ = {
 			isa = PBXGroup;
 			children = (
-				4DB8D69A2244F51D00670BC0 /* MSPage.h */,
-				4DB8D6982244F4D700670BC0 /* MSModelObject.h */,
 				4DA18CDA2244059B00D19222 /* MSColor-Protocol.h */,
 				4DA18CCD2243F0B600D19222 /* MSConstants.h */,
 				4DA18CCE2243F0B600D19222 /* MSConstants.m */,
@@ -126,14 +143,36 @@
 				4DB8D68D2244ED1100670BC0 /* MSImmutableArtboardGroup.h */,
 				4DB8D6972244F40E00670BC0 /* MSImmutableColor.h */,
 				4DB8D68A2244ED1000670BC0 /* MSImmutableDocumentData.h */,
+				4DF78E742248ED7E004024B0 /* MSImmutableFlowConnection.h */,
+				4DF78E732248E2EF004024B0 /* MSImmutableHotspotLayer.h */,
 				4DB8D68E2244ED1100670BC0 /* MSImmutableLayer.h */,
 				4DA18CD12243F13400D19222 /* MSImmutableLayerAncestry.h */,
 				4DB8D6892244ED1000670BC0 /* MSImmutableLayerGroup.h */,
 				4DB8D68B2244ED1000670BC0 /* MSImmutableModelObject.h */,
 				4DB8D6872244ED1000670BC0 /* MSImmutablePage.h */,
 				4DB8D68C2244ED1100670BC0 /* MSImmutableStyledLayer.h */,
+				4DF78E7F22492AA7004024B0 /* MSLayer.h */,
+				4DB8D6982244F4D700670BC0 /* MSModelObject.h */,
+				4DB8D69A2244F51D00670BC0 /* MSPage.h */,
 			);
 			path = Sketch;
+			sourceTree = "<group>";
+		};
+		4EB2CB4465921F1AB2C069C0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B214E39896F61EE9287DCC38 /* libPods-print-export.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D23EC967961014BEFDEDA794 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				934C9379DCA27F4889B1A21D /* Pods-print-export.debug.xcconfig */,
+				F87F0855D9C588A6689F6891 /* Pods-print-export.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -145,6 +184,7 @@
 			files = (
 				4DB8D6942244ED1100670BC0 /* MSImmutableStyledLayer.h in Headers */,
 				4DB8D6922244ED1100670BC0 /* MSImmutableDocumentData.h in Headers */,
+				4DF78E702248DDC0004024B0 /* PEFlowConnection.h in Headers */,
 				4DA18CCF2243F0B600D19222 /* MSConstants.h in Headers */,
 				4DA18CBC2243ABD100D19222 /* NSDecimalFormatter.h in Headers */,
 				4DB8D6962244ED1100670BC0 /* MSImmutableLayer.h in Headers */,
@@ -168,6 +208,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4DA8CB3E2241369D00FC9D2D /* Build configuration list for PBXNativeTarget "print-export" */;
 			buildPhases = (
+				8700C1F07C1BA4654B4A6F0A /* [CP] Check Pods Manifest.lock */,
 				4DA8CB312241369D00FC9D2D /* Headers */,
 				4DA8CB322241369D00FC9D2D /* Sources */,
 				4DA8CB332241369D00FC9D2D /* Frameworks */,
@@ -243,6 +284,28 @@
 			shellPath = /bin/sh;
 			shellScript = "FRAMEWORK=\"print_export.framework\"\nPLUGIN_FILENAME=\"print-export.sketchplugin\"\n\ncp -R $BUILT_PRODUCTS_DIR/$FRAMEWORK $SRCROOT/../../$PLUGIN_FILENAME/Contents/Resources/\n\nosascript -e 'quit app \"Sketch\"'\nsleep 4\nopen -a \"/Applications/Sketch.app\"\n\n";
 		};
+		8700C1F07C1BA4654B4A6F0A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-print-export-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -253,8 +316,10 @@
 				4DA18CC72243EF5D00D19222 /* PEUtils.m in Sources */,
 				4DA8CB452241397F00FC9D2D /* PEPrintExport.m in Sources */,
 				4DA18CD02243F0B600D19222 /* MSConstants.m in Sources */,
+				4DF78E7A2248FB12004024B0 /* types.m in Sources */,
 				4DA18CB5224399DE00D19222 /* PEOptions.m in Sources */,
 				4DA18CBD2243ABD100D19222 /* NSDecimalFormatter.m in Sources */,
+				4DF78E712248DDC0004024B0 /* PEFlowConnection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -380,6 +445,7 @@
 		};
 		4DA8CB3F2241369D00FC9D2D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 934C9379DCA27F4889B1A21D /* Pods-print-export.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -404,6 +470,7 @@
 		};
 		4DA8CB402241369D00FC9D2D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F87F0855D9C588A6689F6891 /* Pods-print-export.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;

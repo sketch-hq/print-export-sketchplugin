@@ -12,3 +12,5 @@ extern NSString *const kMSImmutableLayerAncestry;
 extern NSString *const kMSExportFormat;
 extern NSString *const kMSExportRequest;
 extern NSString *const kMSExportManager;
+extern NSString *const kMSImmutableHotspotLayer;
+extern NSString *const kMSImmutableLayerGroup;

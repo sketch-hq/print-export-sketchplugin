@@ -12,4 +12,5 @@ NSString *const kMSImmutableLayerAncestry = @"MSImmutableLayerAncestry";
 NSString *const kMSExportFormat = @"MSExportFormat";
 NSString *const kMSExportRequest = @"MSExportRequest";
 NSString *const kMSExportManager = @"MSExportManager";
-
+NSString *const kMSImmutableHotspotLayer = @"MSImmutableHotspotLayer";
+NSString *const kMSImmutableLayerGroup = @"MSImmutableLayerGroup";
