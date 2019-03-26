@@ -12,7 +12,7 @@ const PLUGIN_NAME = 'Print Export'
 const SETTINGS_KEY = {
   EXPORT_TYPE: 'exportType',
   SCOPE: 'scope',
-  SHOW_ARTBOARD_BORDER: 'showArtboardBorder',
+  SHOW_ARTBOARD_SHADOW: 'showArtboardShadow',
   SHOW_ARTBOARD_NAME: 'showArtboardName',
   SHOW_PROTOTYPING_LINKS: 'showPrototypingLinks',
   PAPER_SIZE_STANDARD_NAME: 'paperSizeStandardName',
@@ -36,7 +36,7 @@ export default function(context) {
         const options = {
           exportType: optionsDialog.exportType,
           scope: optionsDialog.scope,
-          showArtboardBorder: optionsDialog.showArtboardBorder,
+          showArtboardShadow: optionsDialog.showArtboardShadow,
           showArtboardName: optionsDialog.showArtboardName,
           showPrototypingLinks: optionsDialog.showPrototypingLinks,
           pageWidth: normalizeDimension(optionsDialog.pageWidth, optionsDialog.paperSizeStandard),
@@ -65,7 +65,7 @@ const getSettings = function(document) {
   settings.exportType = Settings.documentSettingForKey(document, SETTINGS_KEY.EXPORT_TYPE) || Settings.settingForKey(SETTINGS_KEY.EXPORT_TYPE)
     || ExportType.ArtboardPerPage
   settings.scope = Settings.documentSettingForKey(document, SETTINGS_KEY.SCOPE) || Settings.settingForKey(SETTINGS_KEY.SCOPE) || Scope.CurrentPage
-  settings.showArtboardBorder = Settings.documentSettingForKey(document, SETTINGS_KEY.SHOW_ARTBOARD_BORDER) || Settings.settingForKey(SETTINGS_KEY.SHOW_ARTBOARD_BORDER) || true
+  settings.showArtboardShadow = Settings.documentSettingForKey(document, SETTINGS_KEY.SHOW_ARTBOARD_SHADOW) || Settings.settingForKey(SETTINGS_KEY.SHOW_ARTBOARD_SHADOW) || true
   settings.showArtboardName = Settings.documentSettingForKey(document, SETTINGS_KEY.SHOW_ARTBOARD_NAME) || Settings.settingForKey(SETTINGS_KEY.SHOW_ARTBOARD_NAME) || false
   settings.showPrototypingLinks = Settings.documentSettingForKey(document, SETTINGS_KEY.SHOW_PROTOTYPING_LINKS) || Settings.settingForKey(SETTINGS_KEY.SHOW_PROTOTYPING_LINKS) || true
   settings.paperSizeStandardName = Settings.documentSettingForKey(document, SETTINGS_KEY.PAPER_SIZE_STANDARD_NAME)

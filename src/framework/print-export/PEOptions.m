@@ -11,7 +11,7 @@
 
 static NSString *const kOptionKeyExportType = @"exportType";
 static NSString *const kOptionKeyScope = @"scope";
-static NSString *const kOptionKeyShowArtboardBorder = @"showArtboardBorder";
+static NSString *const kOptionKeyShowArtboardShadow = @"showArtboardShadow";
 static NSString *const kOptionKeyShowArtboardName = @"showArtboardName";
 static NSString *const kOptionKeyShowPrototypingLinks = @"showPrototypingLinks";
 static NSString *const kOptionKeyPageWidth = @"pageWidth";
@@ -27,7 +27,7 @@ static NSString *const kOptionKeySlug = @"slug";
         NSArray<NSString*> *requiredOptionKeys = @[
                                                    kOptionKeyExportType,
                                                    kOptionKeyScope,
-                                                   kOptionKeyShowArtboardBorder,
+                                                   kOptionKeyShowArtboardShadow,
                                                    kOptionKeyShowArtboardName,
                                                    kOptionKeyShowPrototypingLinks,
                                                    kOptionKeyPageWidth,
@@ -42,7 +42,7 @@ static NSString *const kOptionKeySlug = @"slug";
         }
         _exportType = (PEExportType)((NSNumber*)options[kOptionKeyExportType]).unsignedIntegerValue;
         _scope = (PEScope)((NSNumber*)options[kOptionKeyScope]).unsignedIntegerValue;
-        _showArboardBorder = ((NSNumber*)options[kOptionKeyShowArtboardBorder]).boolValue;
+        _showArboardShadow = ((NSNumber*)options[kOptionKeyShowArtboardShadow]).boolValue;
         _showArboardName = ((NSNumber*)options[kOptionKeyShowArtboardName]).boolValue;
         _showPrototypingLinks = ((NSNumber*)options[kOptionKeyShowPrototypingLinks]).boolValue;
         _pageSize = CGSizeMake(PEMMToUnit(((NSNumber*)options[kOptionKeyPageWidth]).doubleValue), PEMMToUnit(((NSNumber*)options[kOptionKeyPageHeight]).doubleValue));

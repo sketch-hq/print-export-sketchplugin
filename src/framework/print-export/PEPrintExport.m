@@ -29,12 +29,19 @@ static const CGFloat kArrowLength = 10;
 static const CGFloat kArrowWidth = kArrowLength;
 static const CGFloat kStartCircleDiameter = 6;
 static const CGFloat kHotspotCornerRadius = 4;
+static const CGFloat kBackLineLength = 60;
+static const CGFloat kBackBoxSize = 17;
+static const CGFloat kBackBoxCornerRadius = 3;
+static const CGSize kBackArrowSize = {.width =  4, .height = 9};
+static const CGFloat kWhiteColor[] = {0, 0, 0, 0, 1};
 static const CGFloat kCropMarkColor[] = {0, 0, 0, 1, 1};
-static const CGFloat kArtboardNameColor[] = {0, 0, 0, 0.6, 1};
-static const CGFloat kArtboardBorderColor[] = {0, 0, 0, 0.5, 1};
+static const CGFloat kArtboardNameColor[] = {0, 0, 0, 0.4, 1};
 static const CGFloat kPrototypingLinkColor[] = {0, 0.38, 1, 0.04, 1};
 static const CGFloat kStartCircleFillColor[] = {0, 0, 0, 0, 1};
 static const CGFloat kHotspotColor[] = {0, 0.38, 1, 0.04, 0.3};
+static const CGFloat kArtboardShadowBlur = 5;
+static const CGFloat kArtboardMinShadowBlur = 1;
+static const CGFloat kArtboardShadowColor[] = {0, 0, 0, 1, 0.5};
 
 @interface PEPrintExport()
 
@@ -204,12 +211,12 @@ static const CGFloat kHotspotColor[] = {0, 0.38, 1, 0.04, 0.3};
         CGRect targetRect = CGRectMake((self.mediaBox.size.width - targetSize.width) / 2.0, (self.mediaBox.size.height - targetSize.height) / 2.0, targetSize.width, targetSize.height);
         CGContextTranslateCTM(ctx, targetRect.origin.x, targetRect.origin.y);
         CGContextScaleCTM(ctx, targetSize.width / artboardPDFRect.size.width, targetSize.height / artboardPDFRect.size.height);
+        if (self.options.showArboardShadow) {
+            [self drawArtboardShadowWithArtboard:artboard rect:CGRectMake(0, 0, artboard.rect.size.width, artboard.rect.size.height) scale:1 context:ctx];
+        }
         CGContextDrawPDFPage(ctx, artboardPDFPage);
         CFRelease(artboardPDF);
         CGContextRestoreGState(ctx);
-        if (self.options.showArboardBorder) {
-            [self drawArtboardBorderWithArtboard:artboard rect:targetRect context:ctx];
-        }
         if (self.options.showArboardName) {
             [self drawLabel:artboard.name position:CGPointMake(targetRect.origin.x + targetRect.size.width / 2.0, targetRect.origin.y - 30) size:12 context:ctx];
         }
@@ -236,11 +243,11 @@ static const CGFloat kHotspotColor[] = {0, 0.38, 1, 0.04, 0.3};
         CGPDFPageRef artboardPDFPage = CGPDFDocumentGetPage(artboardPDF, 1);
         CGContextSaveGState(ctx);
         CGContextTranslateCTM(ctx, artboard.rect.origin.x - artboardsRect.origin.x, artboardsRect.size.height - (artboard.rect.origin.y - artboardsRect.origin.y + artboard.rect.size.height));
+        if (self.options.showArboardShadow) {
+            [self drawArtboardShadowWithArtboard:artboard rect:CGRectMake(0, 0, artboard.rect.size.width, artboard.rect.size.height) scale:scale context:ctx];
+        }
         CGContextDrawPDFPage(ctx, artboardPDFPage);
         CFRelease(artboardPDF);
-        if (self.options.showArboardBorder) {
-            [self drawArtboardBorderWithArtboard:artboard rect:CGRectMake(0, 0, artboard.rect.size.width, artboard.rect.size.height) context:ctx];
-        }
         if (self.options.showArboardName) {
             [self drawLabel:artboard.name position:CGPointMake(artboard.rect.size.width / 2.0, -40) size:18 context:ctx];
         }
@@ -294,10 +301,15 @@ static const CGFloat kHotspotColor[] = {0, 0.38, 1, 0.04, 0.3};
     CGContextStrokeLineSegments(ctx, points, 16);
 }
 
-- (void)drawArtboardBorderWithArtboard:(MSImmutableArtboardGroup *)artboard rect:(CGRect)artboardRect context:(CGContextRef)ctx {
-    CGContextSetLineWidth(ctx, 0.5);
-    CGContextSetStrokeColor(ctx, kArtboardBorderColor);
-    CGContextStrokeRect(ctx, artboardRect);
+- (void)drawArtboardShadowWithArtboard:(MSImmutableArtboardGroup *)artboard rect:(CGRect)artboardRect scale:(CGFloat)scale context:(CGContextRef)ctx {
+    CGContextSaveGState(ctx);
+    CGColorRef color = CGColorCreate(self.colorSpace, kArtboardShadowColor);
+    CGFloat blur = scale < 0.1 ? kArtboardMinShadowBlur : kArtboardShadowBlur;
+    CGContextSetShadowWithColor(ctx, CGSizeMake(0, 0), blur, color);
+    CGColorRelease(color);
+    CGContextSetFillColor(ctx, kWhiteColor);
+    CGContextFillRect(ctx, artboardRect);
+    CGContextRestoreGState(ctx);
 }
 
 - (void)drawLabel:(NSString*)label position:(CGPoint)position size:(CGFloat)size context:(CGContextRef)ctx {
@@ -328,27 +340,29 @@ static const CGFloat kHotspotColor[] = {0, 0.38, 1, 0.04, 0.3};
     for (MSImmutableArtboardGroup *artboard in page.artboards) {
         NSArray<PEFlowConnection *> *flowConnections = flowConnectionsByArtboardID[artboard.objectID];
         for (PEFlowConnection *flowConnection in flowConnections) {
+            MSImmutableArtboardGroup *destinationArtboard = (MSImmutableArtboardGroup *)[self layerWithID:flowConnection.destinationArtboardID];
+            CGRect sourceRect = CGRectMake(artboard.rect.origin.x - artboardsOrigin.x + flowConnection.frame.origin.x,
+                                           artboard.rect.origin.y - artboardsOrigin.y + flowConnection.frame.origin.y,
+                                           flowConnection.frame.size.width, flowConnection.frame.size.height);
+            if (flowConnection.type == PEFlowConnectionTypeHotspot) {
+                // hotspot
+                [self createRoundedRectanglePathWithRect:sourceRect radius:kHotspotCornerRadius context:ctx];
+                CGContextSetFillColor(ctx, kHotspotColor);
+                CGContextDrawPath(ctx, kCGPathFillStroke);
+            }
+            
+            CGPoint startPoint;
             if (flowConnection.destinationArtboardID != nil) {
-                MSImmutableArtboardGroup *destinationArtboard = (MSImmutableArtboardGroup *)[self layerWithID:flowConnection.destinationArtboardID];
-                CGRect sourceRect = CGRectMake(artboard.rect.origin.x - artboardsOrigin.x + flowConnection.frame.origin.x,
-                                               artboard.rect.origin.y - artboardsOrigin.y + flowConnection.frame.origin.y,
-                                               flowConnection.frame.size.width, flowConnection.frame.size.height);
                 CGRect destinationRect = CGRectMake(destinationArtboard.rect.origin.x - artboardsOrigin.x,
                                                     destinationArtboard.rect.origin.y - artboardsOrigin.y,
                                                     destinationArtboard.rect.size.width,
                                                     destinationArtboard.rect.size.height);
-                PEConnectingLine connectingLine = [PEUtils connectingLineWithRect:sourceRect withRect:destinationRect startOffset:0 endOffset:kConnectingEndPointOffset + kArrowLength];
-                
-                if (flowConnection.type == PEFlowConnectionTypeHotspot) {
-                    // hotspot
-                    [self createRoundedRectanglePathWithRect:sourceRect radius:kHotspotCornerRadius context:ctx];
-                    CGContextSetFillColor(ctx, kHotspotColor);
-                    CGContextDrawPath(ctx, kCGPathFillStroke);
-                }
+                PEConnectingLine connectingLine = [PEUtils connectingLineWithRect:sourceRect withRect:destinationRect endOffset:kConnectingEndPointOffset + kArrowLength];
+                startPoint = connectingLine.startPoint.point;
                 
                 // curve
                 CGContextBeginPath(ctx);
-                CGContextMoveToPoint(ctx, connectingLine.startPoint.point.x, connectingLine.startPoint.point.y);
+                CGContextMoveToPoint(ctx, startPoint.x, startPoint.y);
                 CGFloat deltaX = fabs(connectingLine.startPoint.point.x - connectingLine.endPoint.point.x);
                 CGFloat deltaY = fabs(connectingLine.startPoint.point.y - connectingLine.endPoint.point.y);
                 if (deltaX == 0 || deltaY == 0) {
@@ -361,17 +375,42 @@ static const CGFloat kHotspotColor[] = {0, 0.38, 1, 0.04, 0.3};
                 }
                 CGContextDrawPath(ctx, kCGPathStroke);
                 
-                // start circle
-                CGContextBeginPath(ctx);
-                CGContextAddEllipseInRect(ctx, [PEUtils makeRectWithMidpoint:connectingLine.startPoint.point size:kStartCircleDiameter]);
-                CGContextSetFillColor(ctx, kStartCircleFillColor);
-                CGContextDrawPath(ctx, kCGPathFillStroke);
-                
                 // arrow
                 [self createArrowPathWithPoint:connectingLine.endPoint.point side:connectingLine.endPoint.side length:kArrowLength width:kArrowWidth context:ctx];
                 CGContextSetFillColor(ctx, kPrototypingLinkColor);
                 CGContextDrawPath(ctx, kCGPathFill);
+            } else {
+                // previous artboard
+                startPoint = CGPointMake(sourceRect.origin.x, sourceRect.origin.y + sourceRect.size.height / 2.0);
+                
+                // line
+                CGContextBeginPath(ctx);
+                CGContextMoveToPoint(ctx, startPoint.x, startPoint.y);
+                CGContextAddLineToPoint(ctx, startPoint.x - kBackLineLength, startPoint.y);
+                CGContextDrawPath(ctx, kCGPathStroke);
+                
+                // box
+                CGRect boxRect = CGRectMake(startPoint.x - kBackLineLength - kBackBoxSize, startPoint.y - (kBackBoxSize / 2.0), kBackBoxSize, kBackBoxSize);
+                [self createRoundedRectanglePathWithRect:boxRect radius:kBackBoxCornerRadius context:ctx];
+                CGContextSetFillColor(ctx, kPrototypingLinkColor);
+                CGContextDrawPath(ctx, kCGPathFill);
+                
+                // arrow
+                CGRect arrowRect = [PEUtils centerSize:kBackArrowSize inRect:boxRect];
+                CGContextBeginPath(ctx);
+                CGContextMoveToPoint(ctx, arrowRect.origin.x + arrowRect.size.width, arrowRect.origin.y);
+                CGContextAddLineToPoint(ctx, arrowRect.origin.x, arrowRect.origin.y + arrowRect.size.height / 2.0);
+                CGContextAddLineToPoint(ctx, arrowRect.origin.x + arrowRect.size.width, arrowRect.origin.y + arrowRect.size.height);
+                CGContextSetStrokeColor(ctx, kWhiteColor);
+                CGContextDrawPath(ctx, kCGPathStroke);
             }
+            
+            // start circle
+            CGContextBeginPath(ctx);
+            CGContextAddEllipseInRect(ctx, [PEUtils makeRectWithMidpoint:startPoint size:kStartCircleDiameter]);
+            CGContextSetFillColor(ctx, kStartCircleFillColor);
+            CGContextSetStrokeColor(ctx, kPrototypingLinkColor);
+            CGContextDrawPath(ctx, kCGPathFillStroke);
         }
     }
     CGContextRestoreGState(ctx);

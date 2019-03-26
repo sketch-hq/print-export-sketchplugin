@@ -36,7 +36,7 @@ module.exports = class OptionsDialog {
         break;
     }
 
-    this.nib.showArtboardBorder.state = model.showArtboardBorder ? NSOnState : NSOffState
+    this.nib.showArtboardShadow.state = model.showArtboardShadow ? NSOnState : NSOffState
     this.nib.showArtboardName.state = model.showArtboardName ? NSOnState : NSOffState
     this.nib.showPrototypingLinks.state = model.showPrototypingLinks ? NSOnState : NSOffState
 
@@ -149,8 +149,8 @@ module.exports = class OptionsDialog {
     return this.nib.exportCurrentPage.state() === NSOnState ? Scope.CurrentPage : Scope.AllPages
   }
 
-  get showArtboardBorder() {
-    return this.nib.showArtboardBorder.state() === NSOnState
+  get showArtboardShadow() {
+    return this.nib.showArtboardShadow.state() === NSOnState
   }
 
   get showArtboardName() {

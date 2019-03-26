@@ -90,7 +90,7 @@ CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat height) {
     return CGSizeMake(width, height);
 }
 
-+ (PEConnectingLine)connectingLineWithRect:(CGRect)rect1 withRect:(CGRect)rect2 startOffset:(CGFloat)startOffset endOffset:(CGFloat)endOffset {
++ (PEConnectingLine)connectingLineWithRect:(CGRect)rect1 withRect:(CGRect)rect2 endOffset:(CGFloat)endOffset {
     CGPoint midPoint1 = [self midPointOfRect:rect1];
     CGPoint midPoint2 = [self midPointOfRect:rect2];
     PESide side1, side2;
@@ -112,7 +112,6 @@ CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat height) {
         }
     }
     PEConnectedPoint startConnectedPoint = [self connectedPointWithRect:rect1 side:side1];
-    startConnectedPoint.point = [self offsetConnectedPoint:startConnectedPoint offset:startOffset];
     PEConnectedPoint endConnectedPoint = [self connectedPointWithRect:rect2 side:side2];
     endConnectedPoint.point = [self offsetConnectedPoint:endConnectedPoint offset:endOffset];
     return PEConnectingLineMake(startConnectedPoint, endConnectedPoint);
@@ -121,6 +120,10 @@ CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat height) {
 + (CGRect)makeRectWithMidpoint:(CGPoint)midpoint size:(CGFloat)size {
     CGFloat halfSize = size / 2.0;
     return CGRectMake(midpoint.x - halfSize, midpoint.y - halfSize, size, size);
+}
+
++ (CGRect)centerSize:(CGSize)size inRect:(CGRect)rect {
+    return CGRectMake(rect.origin.x + (rect.size.width - size.width) / 2.0, rect.origin.y + (rect.size.height - size.height) / 2.0, size.width, size.height);
 }
 
 + (CGFloat)distanceBetweenPoint:(CGPoint)point1 andPoint:(CGPoint)point2 {
