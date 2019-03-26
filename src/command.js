@@ -77,9 +77,9 @@ const getSettings = function(document) {
   settings.orientation = Settings.documentSettingForKey(document, SETTINGS_KEY.ORIENTATION) || Settings.settingForKey(SETTINGS_KEY.ORIENTATION)
     || Orientation.Portrait
   settings.pageWidth = Settings.documentSettingForKey(document, SETTINGS_KEY.PAGE_WIDTH) || Settings.settingForKey(SETTINGS_KEY.PAGE_WIDTH)
-    || settings.orientation === Orientation.Portrait ? paperSize.width : paperSize.height
+    || (settings.orientation === Orientation.Portrait ? paperSize.width : paperSize.height)
   settings.pageHeight = Settings.documentSettingForKey(document, SETTINGS_KEY.PAGE_HEIGHT) || Settings.settingForKey(SETTINGS_KEY.PAGE_HEIGHT)
-    || settings.orientation === Orientation.Portrait ? paperSize.height : paperSize.width
+    || (settings.orientation === Orientation.Portrait ? paperSize.height : paperSize.width)
   settings.includeCropMarks = Settings.documentSettingForKey(document, SETTINGS_KEY.INCLUDE_CROP_MARKS) !== undefined
     || Settings.settingForKey(SETTINGS_KEY.INCLUDE_CROP_MARKS) !== undefined || true
   settings.bleed = Settings.documentSettingForKey(document, SETTINGS_KEY.BLEED)

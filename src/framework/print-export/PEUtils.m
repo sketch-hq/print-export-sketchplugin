@@ -90,7 +90,7 @@ CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat height) {
     return CGSizeMake(width, height);
 }
 
-+ (PEConnectingLine)connectingLineWithRect:(CGRect)rect1 withRect:(CGRect)rect2 endOffset:(CGFloat)endOffset {
++ (PEConnectingLine)connectingLineWithRect:(CGRect)rect1 withRect:(CGRect)rect2 {
     CGPoint midPoint1 = [self midPointOfRect:rect1];
     CGPoint midPoint2 = [self midPointOfRect:rect2];
     PESide side1, side2;
@@ -113,7 +113,6 @@ CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat height) {
     }
     PEConnectedPoint startConnectedPoint = [self connectedPointWithRect:rect1 side:side1];
     PEConnectedPoint endConnectedPoint = [self connectedPointWithRect:rect2 side:side2];
-    endConnectedPoint.point = [self offsetConnectedPoint:endConnectedPoint offset:endOffset];
     return PEConnectingLineMake(startConnectedPoint, endConnectedPoint);
 }
 
@@ -130,15 +129,21 @@ CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat height) {
     return sqrt(pow(point1.x - point2.x, 2) + pow(point1.y - point2.y, 2));
 }
 
-# pragma mark - Private
-
-+ (CGPoint)midPointOfRect:(CGRect)rect {
-    return CGPointMake(rect.origin.x + (rect.size.width / 2.0), rect.origin.y + (rect.size.height / 2.0));
++ (CGPoint)PDFPointWithAbsPoint:(CGPoint)absPoint artboardsRect:(CGRect)artboardsRect scale:(CGFloat)scale {
+    return CGPointMake((absPoint.x - artboardsRect.origin.x) * scale, (absPoint.y - artboardsRect.origin.y) * scale);
 }
 
-+ (CGPoint)offsetConnectedPoint:(PEConnectedPoint)connectedPoint offset:(CGFloat)offset {
-    CGPoint point = connectedPoint.point;
-    switch (connectedPoint.side) {
++ (PEConnectedPoint)PDFConnectedPointWithAbsConnectedPoint:(PEConnectedPoint)absConnectedPoint artboardsRect:(CGRect)artboardsRect scale:(CGFloat)scale {
+    return PEConnectedPointMake([self PDFPointWithAbsPoint:absConnectedPoint.point artboardsRect:artboardsRect scale:scale], absConnectedPoint.side);
+}
+
++ (CGRect)PDFRectWithAbsRect:(CGRect)absRect artboardsRect:(CGRect)artboardsRect scale:(CGFloat)scale {
+    return CGRectMake((absRect.origin.x - artboardsRect.origin.x) * scale, (absRect.origin.y - artboardsRect.origin.y) * scale,
+                      absRect.size.width * scale, absRect.size.height * scale);
+}
+
++ (CGPoint)offsetPoint:(CGPoint)point side:(PESide)side offset:(CGFloat)offset {
+    switch (side) {
         case PESideTop:
             return CGPointMake(point.x, point.y - offset);
             
@@ -154,6 +159,12 @@ CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat height) {
         default:
             return point;
     }
+}
+
+# pragma mark - Private
+
++ (CGPoint)midPointOfRect:(CGRect)rect {
+    return CGPointMake(rect.origin.x + (rect.size.width / 2.0), rect.origin.y + (rect.size.height / 2.0));
 }
 
 + (BOOL)intersectsVerticallyWithRect:(CGRect)rect1 andRect:(CGRect)rect2 {

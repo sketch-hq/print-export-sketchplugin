@@ -23,22 +23,25 @@
 static const CGFloat kCropMarkLength = 5; // millimeters
 static const CGFloat kPageMargin = 20; // millimeters
 static NSString *const kFontName = @"Helvetica Neue";
-static const CGFloat kConnectingEndPointOffset = 6;
-static const CGFloat kArrowLength = 10;
-static const CGFloat kArrowWidth = kArrowLength;
-static const CGFloat kStartCircleDiameter = 6;
-static const CGFloat kBackLineLength = 60;
-static const CGFloat kBackBoxSize = 17;
-static const CGFloat kBackBoxCornerRadius = 3;
-static const CGSize kBackArrowSize = {.width =  4, .height = 9};
+
 static const CGFloat kWhiteColor[] = {0, 0, 0, 0, 1};
 static const CGFloat kCropMarkColor[] = {0, 0, 0, 1, 1};
 static const CGFloat kArtboardNameColor[] = {0, 0, 0, 0.4, 1};
 static const CGFloat kPrototypingLinkColor[] = {0, 0.38, 1, 0.04, 1};
+
 static const CGFloat kStartCircleFillColor[] = {0, 0, 0, 0, 1};
 static const CGFloat kArtboardShadowBlur = 5;
 static const CGFloat kArtboardMinShadowBlur = 1;
 static const CGFloat kArtboardShadowColor[] = {0, 0, 0, 1, 0.5};
+
+static const CGSize kArrowSize = {.width = 5, .height = 5};
+static const CGFloat kConnectingEndPointOffset = 2;
+static const CGFloat kStartCircleDiameter = 3;
+static const CGFloat kBackBoxOffset = 3;
+static const CGFloat kBackBoxSize = 7;
+static const CGFloat kBackBoxCornerRadius = 1.5;
+static const CGSize kBackArrowSize = {.width =  2, .height = 4};
+static const CGFloat kPrototypingLinkWidth = 0.5;
 
 @interface PEPrintExport()
 
@@ -234,11 +237,11 @@ static const CGFloat kArtboardShadowColor[] = {0, 0, 0, 1, 0.5};
     CGPoint origin = CGPointMake((self.mediaBox.size.width - targetSize.width) / 2.0, (self.mediaBox.size.height - targetSize.height) / 2.0);
     CGContextTranslateCTM(ctx, origin.x, origin.y);
     CGFloat scale = targetSize.width / artboardsRect.size.width;
-    CGContextScaleCTM(ctx, scale, scale);
     for (MSImmutableArtboardGroup *artboard in page.artboards) {
         CGPDFDocumentRef artboardPDF = [PEUtils createPDFPageOfArtboard:artboard documentData:self.immutableDocumentData];
         CGPDFPageRef artboardPDFPage = CGPDFDocumentGetPage(artboardPDF, 1);
         CGContextSaveGState(ctx);
+        CGContextScaleCTM(ctx, scale, scale);
         CGContextTranslateCTM(ctx, artboard.rect.origin.x - artboardsRect.origin.x, artboardsRect.size.height - (artboard.rect.origin.y - artboardsRect.origin.y + artboard.rect.size.height));
         if (self.options.showArboardShadow) {
             [self drawArtboardShadowWithArtboard:artboard rect:CGRectMake(0, 0, artboard.rect.size.width, artboard.rect.size.height) scale:scale context:ctx];
@@ -246,13 +249,12 @@ static const CGFloat kArtboardShadowColor[] = {0, 0, 0, 1, 0.5};
         CGContextDrawPDFPage(ctx, artboardPDFPage);
         CFRelease(artboardPDF);
         if (self.options.showArboardName) {
-            [self drawLabel:artboard.name position:CGPointMake(artboard.rect.size.width / 2.0, -40) size:18 context:ctx];
+            [self drawLabel:artboard.name position:CGPointMake(artboard.rect.size.width / 2.0, -40) size:22 context:ctx];
         }
         CGContextRestoreGState(ctx);
     }
     if (self.options.showPrototypingLinks) {
-        CGContextConcatCTM(ctx, CGAffineTransformMake(1, 0, 0, -1, 0, artboardsRect.size.height));
-        [self drawPrototypingLinksWithPage:page artboardsOrigin:artboardsRect.origin context:ctx];
+        [self drawPrototypingLinksWithPage:page artboardsRect:artboardsRect scale:scale context:ctx];
     }
     CGContextRestoreGState(ctx);
     CGContextEndPage(ctx);
@@ -328,45 +330,44 @@ static const CGFloat kArtboardShadowColor[] = {0, 0, 0, 1, 0.5};
     CFRelease(font);
 }
 
-- (void)drawPrototypingLinksWithPage:(MSImmutablePage *)page artboardsOrigin:(CGPoint)artboardsOrigin context:(CGContextRef)ctx {
+- (void)drawPrototypingLinksWithPage:(MSImmutablePage *)page artboardsRect:(CGRect)artboardsRect scale:(CGFloat)scale context:(CGContextRef)ctx {
     NSDictionary<NSString *, NSArray<PEFlowConnection *> *> *flowConnectionsByArtboardID = [self buildFlowConnectionsWithPage:page];
     
     CGContextSaveGState(ctx);
-    CGContextSetLineWidth(ctx, 1);
+    CGContextConcatCTM(ctx, CGAffineTransformMake(1, 0, 0, -1, 0, artboardsRect.size.height * scale));
+    CGContextSetLineWidth(ctx, kPrototypingLinkWidth);
     CGContextSetStrokeColor(ctx, kPrototypingLinkColor);
     for (MSImmutableArtboardGroup *artboard in page.artboards) {
         NSArray<PEFlowConnection *> *flowConnections = flowConnectionsByArtboardID[artboard.objectID];
         for (PEFlowConnection *flowConnection in flowConnections) {
             MSImmutableArtboardGroup *destinationArtboard = (MSImmutableArtboardGroup *)[self layerWithID:flowConnection.destinationArtboardID];
-            CGRect sourceRect = CGRectMake(artboard.rect.origin.x - artboardsOrigin.x + flowConnection.frame.origin.x,
-                                           artboard.rect.origin.y - artboardsOrigin.y + flowConnection.frame.origin.y,
-                                           flowConnection.frame.size.width, flowConnection.frame.size.height);
+            CGRect sourceAbsRect = CGRectMake(artboard.rect.origin.x + flowConnection.frame.origin.x, artboard.rect.origin.y + flowConnection.frame.origin.y,
+                                              flowConnection.frame.size.width, flowConnection.frame.size.height);
+            CGRect sourceRect = [PEUtils PDFRectWithAbsRect:sourceAbsRect artboardsRect:artboardsRect scale:scale];
             CGPoint startPoint;
             if (flowConnection.destinationArtboardID != nil) {
-                CGRect destinationRect = CGRectMake(destinationArtboard.rect.origin.x - artboardsOrigin.x,
-                                                    destinationArtboard.rect.origin.y - artboardsOrigin.y,
-                                                    destinationArtboard.rect.size.width,
-                                                    destinationArtboard.rect.size.height);
-                PEConnectingLine connectingLine = [PEUtils connectingLineWithRect:sourceRect withRect:destinationRect endOffset:kConnectingEndPointOffset + kArrowLength];
-                startPoint = connectingLine.startPoint.point;
+                PEConnectingLine connectingLine = [PEUtils connectingLineWithRect:sourceAbsRect withRect:destinationArtboard.rect];
+                startPoint = [PEUtils PDFPointWithAbsPoint:connectingLine.startPoint.point artboardsRect:artboardsRect scale:scale];
+                PEConnectedPoint pdfConnectedPoint = [PEUtils PDFConnectedPointWithAbsConnectedPoint:connectingLine.endPoint artboardsRect:artboardsRect scale:scale];
+                CGPoint endPoint = [PEUtils offsetPoint:pdfConnectedPoint.point side:connectingLine.endPoint.side offset:kConnectingEndPointOffset + kArrowSize.height];
                 
                 // curve
                 CGContextBeginPath(ctx);
                 CGContextMoveToPoint(ctx, startPoint.x, startPoint.y);
-                CGFloat deltaX = fabs(connectingLine.startPoint.point.x - connectingLine.endPoint.point.x);
-                CGFloat deltaY = fabs(connectingLine.startPoint.point.y - connectingLine.endPoint.point.y);
+                CGFloat deltaX = fabs(startPoint.x - connectingLine.endPoint.point.x);
+                CGFloat deltaY = fabs(startPoint.y - connectingLine.endPoint.point.y);
                 if (deltaX == 0 || deltaY == 0) {
-                    CGContextAddLineToPoint(ctx, connectingLine.endPoint.point.x, connectingLine.endPoint.point.y);
+                    CGContextAddLineToPoint(ctx, endPoint.x, endPoint.y);
                 } else {
-                    CGFloat length = [PEUtils distanceBetweenPoint:connectingLine.startPoint.point andPoint:connectingLine.endPoint.point] / 3.0;
-                    CGPoint controlPoint1 = [self calculateControlPointWithConnectedPoint:connectingLine.startPoint length:length];
-                    CGPoint controlPoint2 = [self calculateControlPointWithConnectedPoint:connectingLine.endPoint length:length];
-                    CGContextAddCurveToPoint(ctx, controlPoint1.x, controlPoint1.y, controlPoint2.x, controlPoint2.y, connectingLine.endPoint.point.x, connectingLine.endPoint.point.y);
+                    CGFloat length = [PEUtils distanceBetweenPoint:startPoint andPoint:endPoint] / 3.0;
+                    CGPoint controlPoint1 = [self calculateControlPointWithPoint:startPoint side:connectingLine.startPoint.side length:length];
+                    CGPoint controlPoint2 = [self calculateControlPointWithPoint:endPoint side:connectingLine.endPoint.side length:length];
+                    CGContextAddCurveToPoint(ctx, controlPoint1.x, controlPoint1.y, controlPoint2.x, controlPoint2.y, endPoint.x, endPoint.y);
                 }
                 CGContextDrawPath(ctx, kCGPathStroke);
                 
                 // arrow
-                [self createArrowPathWithPoint:connectingLine.endPoint.point side:connectingLine.endPoint.side length:kArrowLength width:kArrowWidth context:ctx];
+                [self createArrowPathWithPoint:endPoint side:connectingLine.endPoint.side size:kArrowSize context:ctx];
                 CGContextSetFillColor(ctx, kPrototypingLinkColor);
                 CGContextDrawPath(ctx, kCGPathFill);
             } else {
@@ -376,11 +377,12 @@ static const CGFloat kArtboardShadowColor[] = {0, 0, 0, 1, 0.5};
                 // line
                 CGContextBeginPath(ctx);
                 CGContextMoveToPoint(ctx, startPoint.x, startPoint.y);
-                CGContextAddLineToPoint(ctx, startPoint.x - kBackLineLength, startPoint.y);
+                CGPoint endPoint = CGPointMake(((artboard.rect.origin.x - artboardsRect.origin.x) * scale) - kBackBoxOffset, startPoint.y);
+                CGContextAddLineToPoint(ctx, endPoint.x, endPoint.y);
                 CGContextDrawPath(ctx, kCGPathStroke);
                 
                 // box
-                CGRect boxRect = CGRectMake(startPoint.x - kBackLineLength - kBackBoxSize, startPoint.y - (kBackBoxSize / 2.0), kBackBoxSize, kBackBoxSize);
+                CGRect boxRect = CGRectMake(endPoint.x - kBackBoxSize, endPoint.y - (kBackBoxSize / 2.0), kBackBoxSize, kBackBoxSize);
                 [self createRoundedRectanglePathWithRect:boxRect radius:kBackBoxCornerRadius context:ctx];
                 CGContextSetFillColor(ctx, kPrototypingLinkColor);
                 CGContextDrawPath(ctx, kCGPathFill);
@@ -407,7 +409,7 @@ static const CGFloat kArtboardShadowColor[] = {0, 0, 0, 1, 0.5};
 }
 
 // point is where the curve connects to the arrow i.e. opposite the apex
-- (void)createArrowPathWithPoint:(CGPoint)point side:(PESide)side length:(CGFloat)length width:(CGFloat)width context:(CGContextRef)ctx {
+- (void)createArrowPathWithPoint:(CGPoint)point side:(PESide)side size:(CGSize)size context:(CGContextRef)ctx {
     CGFloat angle = 0;
     switch (side) {
         case PESideTop:
@@ -419,22 +421,22 @@ static const CGFloat kArtboardShadowColor[] = {0, 0, 0, 1, 0.5};
             break;
             
         case PESideBottom:
-            angle = - M_PI_2;
+            angle = -M_PI_2;
             break;
             
         case PESideLeft:
             angle = 0;
             break;
     }
-    [self createArrowPathWithPoint:point angle:angle length:length width:width context:ctx];
+    [self createArrowPathWithPoint:point angle:angle size:size context:ctx];
 }
 
-- (void)createArrowPathWithPoint:(CGPoint)point angle:(CGFloat)angle length:(CGFloat)length width:(CGFloat)width context:(CGContextRef)ctx {
+- (void)createArrowPathWithPoint:(CGPoint)point angle:(CGFloat)angle size:(CGSize)size context:(CGContextRef)ctx {
     CGContextBeginPath(ctx);
-    CGFloat halfWidth = width / 2.0;
+    CGFloat halfWidth = size.width / 2.0;
     CGContextMoveToPoint(ctx, cos(angle + M_PI_2) * halfWidth + point.x, sin(angle + M_PI_2) * halfWidth + point.y);
     CGContextAddLineToPoint(ctx, cos(angle - M_PI_2) * halfWidth + point.x, sin(angle - M_PI_2) * halfWidth + point.y);
-    CGContextAddLineToPoint(ctx, cos(angle) * length + point.x, sin(angle) * length + point.y);
+    CGContextAddLineToPoint(ctx, cos(angle) * size.height + point.x, sin(angle) * size.height + point.y);
     CGContextClosePath(ctx);
 }
 
@@ -455,19 +457,19 @@ static const CGFloat kArtboardShadowColor[] = {0, 0, 0, 1, 0.5};
     CGContextClosePath(ctx);
 }
 
-- (CGPoint)calculateControlPointWithConnectedPoint:(PEConnectedPoint)connectedPoint length:(CGFloat)length {
-    switch (connectedPoint.side) {
+- (CGPoint)calculateControlPointWithPoint:(CGPoint)point side:(PESide)side length:(CGFloat)length {
+    switch (side) {
         case PESideLeft:
-            return CGPointMake(connectedPoint.point.x - length, connectedPoint.point.y);
+            return CGPointMake(point.x - length, point.y);
             
         case PESideRight:
-            return CGPointMake(connectedPoint.point.x + length, connectedPoint.point.y);
+            return CGPointMake(point.x + length, point.y);
             
         case PESideTop:
-            return CGPointMake(connectedPoint.point.x, connectedPoint.point.y - length);
+            return CGPointMake(point.x, point.y - length);
             
         case PESideBottom:
-            return CGPointMake(connectedPoint.point.x, connectedPoint.point.y + length);
+            return CGPointMake(point.x, point.y + length);
     }
 }
 

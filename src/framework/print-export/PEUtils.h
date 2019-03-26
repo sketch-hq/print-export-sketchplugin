@@ -21,9 +21,13 @@ extern CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat he
 + (CGPDFDocumentRef)createPDFPageOfArtboard:(MSImmutableArtboardGroup *)artboard documentData:(MSImmutableDocumentData *)documentData;
 + (MSImmutableLayer*)immutableLayerWithID:(NSString *)layerID documentData:(MSDocumentData *)documentData;
 + (CGSize)fitSize:(CGSize)sourceSize inSize:(CGSize)targetSize;
-+ (PEConnectingLine)connectingLineWithRect:(CGRect)rect1 withRect:(CGRect)rect2 endOffset:(CGFloat)endOffset;
++ (PEConnectingLine)connectingLineWithRect:(CGRect)rect1 withRect:(CGRect)rect2;
 + (CGRect)makeRectWithMidpoint:(CGPoint)midpoint size:(CGFloat)size;
 + (CGRect)centerSize:(CGSize)size inRect:(CGRect)rect2;
 + (CGFloat)distanceBetweenPoint:(CGPoint)point1 andPoint:(CGPoint)point2;
++ (CGPoint)PDFPointWithAbsPoint:(CGPoint)absPoint artboardsRect:(CGRect)artboardsRect scale:(CGFloat)scale;
++ (PEConnectedPoint)PDFConnectedPointWithAbsConnectedPoint:(PEConnectedPoint)absConnectedPoint artboardsRect:(CGRect)artboardsRect scale:(CGFloat)scale;
++ (CGRect)PDFRectWithAbsRect:(CGRect)absRect artboardsRect:(CGRect)artboardsRect scale:(CGFloat)scale;
++ (CGPoint)offsetPoint:(CGPoint)point side:(PESide)side offset:(CGFloat)offset;
 
 @end
