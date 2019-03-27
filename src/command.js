@@ -45,8 +45,7 @@ export default function(context) {
           bleed: normalizeDimension(optionsDialog.bleed, optionsDialog.paperSizeStandard),
           slug: normalizeDimension(optionsDialog.slug, optionsDialog.paperSizeStandard)
         }
-        frameworkClass().generatePDFWithDocument_filePath_options(document.sketchObject, filePath, options)
-        UI.message('The PDF has been exported')
+        frameworkClass().generatePDFWithDocument_filePath_options_context(document.sketchObject, filePath, options, context)
       }
     }
   }

@@ -32,6 +32,8 @@
 		4DF78E702248DDC0004024B0 /* PEFlowConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DF78E6E2248DDC0004024B0 /* PEFlowConnection.h */; };
 		4DF78E712248DDC0004024B0 /* PEFlowConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF78E6F2248DDC0004024B0 /* PEFlowConnection.m */; };
 		4DF78E7A2248FB12004024B0 /* types.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF78E792248FB12004024B0 /* types.m */; };
+		4DF78E85224BC8B8004024B0 /* PESketchMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DF78E83224BC8B8004024B0 /* PESketchMethods.h */; };
+		4DF78E86224BC8B8004024B0 /* PESketchMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF78E84224BC8B8004024B0 /* PESketchMethods.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -72,6 +74,10 @@
 		4DF78E742248ED7E004024B0 /* MSImmutableFlowConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSImmutableFlowConnection.h; sourceTree = "<group>"; };
 		4DF78E792248FB12004024B0 /* types.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = types.m; sourceTree = "<group>"; };
 		4DF78E7F22492AA7004024B0 /* MSLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSLayer.h; sourceTree = "<group>"; };
+		4DF78E81224BC761004024B0 /* MSContentDrawViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSContentDrawViewController.h; sourceTree = "<group>"; };
+		4DF78E82224BC795004024B0 /* MSFlashController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSFlashController.h; sourceTree = "<group>"; };
+		4DF78E83224BC8B8004024B0 /* PESketchMethods.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PESketchMethods.h; sourceTree = "<group>"; };
+		4DF78E84224BC8B8004024B0 /* PESketchMethods.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PESketchMethods.m; sourceTree = "<group>"; };
 		934C9379DCA27F4889B1A21D /* Pods-print-export.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-print-export.debug.xcconfig"; path = "Pods/Target Support Files/Pods-print-export/Pods-print-export.debug.xcconfig"; sourceTree = "<group>"; };
 		B214E39896F61EE9287DCC38 /* libPods-print-export.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-print-export.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F87F0855D9C588A6689F6891 /* Pods-print-export.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-print-export.release.xcconfig"; path = "Pods/Target Support Files/Pods-print-export/Pods-print-export.release.xcconfig"; sourceTree = "<group>"; };
@@ -126,6 +132,8 @@
 				4DA8CB492241441400FC9D2D /* Sketch */,
 				4DA8CB6A2242886500FC9D2D /* types.h */,
 				4DF78E792248FB12004024B0 /* types.m */,
+				4DF78E83224BC8B8004024B0 /* PESketchMethods.h */,
+				4DF78E84224BC8B8004024B0 /* PESketchMethods.m */,
 			);
 			path = "print-export";
 			sourceTree = "<group>";
@@ -136,10 +144,12 @@
 				4DA18CDA2244059B00D19222 /* MSColor-Protocol.h */,
 				4DA18CCD2243F0B600D19222 /* MSConstants.h */,
 				4DA18CCE2243F0B600D19222 /* MSConstants.m */,
+				4DF78E81224BC761004024B0 /* MSContentDrawViewController.h */,
 				4DA18CC02243BB7F00D19222 /* MSDocument.h */,
 				4DA18CC12243BBB000D19222 /* MSDocumentData.h */,
 				4DA18CD42243F20300D19222 /* MSExportManager.h */,
 				4DA18CD22243F16000D19222 /* MSExportRequest.h */,
+				4DF78E82224BC795004024B0 /* MSFlashController.h */,
 				4DB8D68D2244ED1100670BC0 /* MSImmutableArtboardGroup.h */,
 				4DB8D6972244F40E00670BC0 /* MSImmutableColor.h */,
 				4DB8D68A2244ED1000670BC0 /* MSImmutableDocumentData.h */,
@@ -196,6 +206,7 @@
 				4DA18CC62243EF5D00D19222 /* PEUtils.h in Headers */,
 				4DB8D6992244F4D700670BC0 /* MSModelObject.h in Headers */,
 				4DB8D69B2244F51D00670BC0 /* MSPage.h in Headers */,
+				4DF78E85224BC8B8004024B0 /* PESketchMethods.h in Headers */,
 				4DA8CB442241397F00FC9D2D /* PEPrintExport.h in Headers */,
 				4DB8D6952244ED1100670BC0 /* MSImmutableArtboardGroup.h in Headers */,
 			);
@@ -320,6 +331,7 @@
 				4DA18CB5224399DE00D19222 /* PEOptions.m in Sources */,
 				4DA18CBD2243ABD100D19222 /* NSDecimalFormatter.m in Sources */,
 				4DF78E712248DDC0004024B0 /* PEFlowConnection.m in Sources */,
+				4DF78E86224BC8B8004024B0 /* PESketchMethods.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

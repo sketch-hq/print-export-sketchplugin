@@ -14,6 +14,6 @@
 @interface PEPrintExport : NSObject
 
 + (void)onShutdown:(NSDictionary *)context;
-+ (void)generatePDFWithDocument:(MSDocument *)document filePath:(NSString *)filePath options:(NSDictionary *)options;
++ (void)generatePDFWithDocument:(MSDocument *)document filePath:(NSString *)filePath options:(NSDictionary *)options context:(NSDictionary *)pluginContext;
 
 @end

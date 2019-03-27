@@ -19,9 +19,11 @@
 #import "PEFlowConnection.h"
 #import "types.h"
 #import <NSLogger/NSLogger.h>
+#import "PESketchMethods.h"
 
 static const CGFloat kCropMarkLength = 5; // millimeters
 static const CGFloat kPageMargin = 20; // millimeters
+static const CGFloat kImageResolution = 300; // dpi
 static NSString *const kFontName = @"Helvetica Neue";
 
 static const CGFloat kWhiteColor[] = {0, 0, 0, 0, 1};
@@ -77,19 +79,24 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
     }
 }
 
-+ (void)generatePDFWithDocument:(MSDocument *)document filePath:(NSString *)filePath options:(NSDictionary*)options {
++ (void)generatePDFWithDocument:(MSDocument *)document filePath:(NSString *)filePath options:(NSDictionary*)options context:(NSDictionary *)pluginContext {
     PEOptions *typedOptions = [[PEOptions alloc] initWithOptions:options];
     NSURL *fileURL = [NSURL fileURLWithPath:filePath];
-    PEPrintExport *printExport = [[PEPrintExport alloc] initWithDocument:document fileURL:fileURL options:typedOptions];
-    switch (typedOptions.exportType) {
-        case PEExportTypeArtboardPerPage:
-            [printExport generateArtboardPerPage];
-            break;
-            
-        case PEExportTypeSketchPagePerPage:
-            [printExport generateSketchPagePerPage];
-            break;
-    }
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        PEPrintExport *printExport = [[PEPrintExport alloc] initWithDocument:document fileURL:fileURL options:typedOptions];
+        switch (typedOptions.exportType) {
+            case PEExportTypeArtboardPerPage:
+                [printExport generateArtboardPerPage];
+                break;
+                
+            case PEExportTypeSketchPagePerPage:
+                [printExport generateSketchPagePerPage];
+                break;
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [PESketchMethods displayFlashMessage:@"The PDF has been exported" document:document];
+        });
+    });
 }
 
 # pragma mark - Private
@@ -105,7 +112,7 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
         _pageMargin = PEMMToUnit(kPageMargin);
         _slugBleed = self.options.slug + self.options.bleed;
         _maxPageSize = CGSizeMake(self.options.pageSize.width - (self.pageMargin * 2), self.options.pageSize.height - (self.pageMargin * 2));
-        self.colorSpace = CGColorSpaceCreateDeviceCMYK();
+        self.colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericCMYK);
     }
     return self;
 }
@@ -194,6 +201,7 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
         }
         return NSOrderedSame;
     }];
+    NSColorSpace *nsColorSpace = [[NSColorSpace alloc] initWithCGColorSpace:self.colorSpace];
     for (MSImmutableArtboardGroup *artboard in sortedArtboards) {
         CGContextBeginPage(ctx, NULL);
         [self setColorSpaceWithContext:ctx];
@@ -201,19 +209,19 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
         if (self.options.hasCropMarks) {
             [self drawCropMarksWithContext:ctx];
         }
-        CGPDFDocumentRef artboardPDF = [PEUtils createPDFPageOfArtboard:artboard documentData:self.immutableDocumentData];
-        CGPDFPageRef artboardPDFPage = CGPDFDocumentGetPage(artboardPDF, 1);
         CGSize targetSize = [PEUtils fitSize:artboard.rect.size inSize:self.maxPageSize];
-        CGRect artboardPDFRect = CGPDFPageGetBoxRect(artboardPDFPage, kCGPDFCropBox);
         CGContextSaveGState(ctx);
         CGRect targetRect = CGRectMake((self.mediaBox.size.width - targetSize.width) / 2.0, (self.mediaBox.size.height - targetSize.height) / 2.0, targetSize.width, targetSize.height);
         CGContextTranslateCTM(ctx, targetRect.origin.x, targetRect.origin.y);
-        CGContextScaleCTM(ctx, targetSize.width / artboardPDFRect.size.width, targetSize.height / artboardPDFRect.size.height);
         if (self.options.showArboardShadow) {
-            [self drawArtboardShadowWithArtboard:artboard rect:CGRectMake(0, 0, artboard.rect.size.width, artboard.rect.size.height) scale:1 context:ctx];
+            [self drawArtboardShadowWithArtboard:artboard rect:CGRectMake(0, 0, targetSize.width, targetSize.height) scale:1 context:ctx];
         }
-        CGContextDrawPDFPage(ctx, artboardPDFPage);
-        CFRelease(artboardPDF);
+        double imageScale = (targetSize.width / 72 * kImageResolution) / artboard.rect.size.width;
+        if (imageScale < 1) {
+            imageScale = 1;
+        }
+        CGImageRef artboardImage = [PEUtils imageOfArtboard:artboard scale:imageScale targetColorSpace:nsColorSpace documentData:self.immutableDocumentData];
+        CGContextDrawImage(ctx, CGRectMake(0, 0, targetSize.width, targetSize.height), artboardImage);
         CGContextRestoreGState(ctx);
         if (self.options.showArboardName) {
             [self drawLabel:artboard.name position:CGPointMake(targetRect.origin.x + targetRect.size.width / 2.0, targetRect.origin.y - 30) size:12 context:ctx];
@@ -243,24 +251,27 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
     CGPoint origin = CGPointMake((self.mediaBox.size.width - targetSize.width) / 2.0, (self.mediaBox.size.height - targetSize.height) / 2.0);
     CGContextTranslateCTM(ctx, origin.x, origin.y);
     CGFloat scale = targetSize.width / artboardsRect.size.width;
+    NSColorSpace *nsColorSpace = [[NSColorSpace alloc] initWithCGColorSpace:self.colorSpace];
     for (MSImmutableArtboardGroup *artboard in sortedArtboards) {
-        CGPDFDocumentRef artboardPDF = [PEUtils createPDFPageOfArtboard:artboard documentData:self.immutableDocumentData];
-        CGPDFPageRef artboardPDFPage = CGPDFDocumentGetPage(artboardPDF, 1);
         CGContextSaveGState(ctx);
         CGContextScaleCTM(ctx, scale, scale);
         CGContextTranslateCTM(ctx, artboard.rect.origin.x - artboardsRect.origin.x, artboardsRect.size.height - (artboard.rect.origin.y - artboardsRect.origin.y + artboard.rect.size.height));
         if (self.options.showArboardShadow) {
             [self drawArtboardShadowWithArtboard:artboard rect:CGRectMake(0, 0, artboard.rect.size.width, artboard.rect.size.height) scale:scale context:ctx];
         }
-        CGContextDrawPDFPage(ctx, artboardPDFPage);
-        CFRelease(artboardPDF);
+        double imageScale = ((((targetSize.width / 72) / artboardsRect.size.width) * artboard.rect.size.width) * kImageResolution) / artboard.rect.size.width;
+        if (imageScale < 1) {
+            imageScale = 1;
+        }
+        CGImageRef artboardImage = [PEUtils imageOfArtboard:artboard scale:imageScale targetColorSpace:nsColorSpace documentData:self.immutableDocumentData];
+        CGContextDrawImage(ctx, CGRectMake(0, 0, artboard.rect.size.width, artboard.rect.size.height), artboardImage);
         CGContextRestoreGState(ctx);
         if (self.options.showPrototypingLinks) {
             [self drawPrototypingLinksWithArtboard:artboard flowConnectionsByArtboardID:flowConnectionsByArtboardID artboardsRect:artboardsRect scale:scale context:ctx];
         }
         if (self.options.showArboardName) {
             CGPoint position = [PEUtils PDFPointWithAbsPoint:CGPointMake(artboard.rect.origin.x + artboard.rect.size.width / 2.0, artboard.rect.origin.y + artboard.rect.size.height + 40)
-                                               artboardsRect:artboardsRect scale:scale];
+                                               absBoundsRect:artboardsRect scale:scale];
             [self drawLabel:artboard.name position:position size:22 * scale context:ctx];
         }
     }
@@ -376,12 +387,12 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
         MSImmutableArtboardGroup *destinationArtboard = (MSImmutableArtboardGroup *)[self layerWithID:flowConnection.destinationArtboardID];
         CGRect sourceAbsRect = CGRectMake(artboard.rect.origin.x + flowConnection.frame.origin.x, artboard.rect.origin.y + flowConnection.frame.origin.y,
                                           flowConnection.frame.size.width, flowConnection.frame.size.height);
-        CGRect sourceRect = [PEUtils PDFRectWithAbsRect:sourceAbsRect artboardsRect:artboardsRect scale:scale];
+        CGRect sourceRect = [PEUtils PDFRectWithAbsRect:sourceAbsRect absBoundsRect:artboardsRect scale:scale];
         CGPoint startPoint;
         if (flowConnection.destinationArtboardID != nil) {
             PEConnectingLine connectingLine = [PEUtils connectingLineWithRect:sourceAbsRect withRect:destinationArtboard.rect];
-            startPoint = [PEUtils PDFPointWithAbsPoint:connectingLine.startPoint.point artboardsRect:artboardsRect scale:scale];
-            PEConnectedPoint pdfConnectedPoint = [PEUtils PDFConnectedPointWithAbsConnectedPoint:connectingLine.endPoint artboardsRect:artboardsRect scale:scale];
+            startPoint = [PEUtils PDFPointWithAbsPoint:connectingLine.startPoint.point absBoundsRect:artboardsRect scale:scale];
+            PEConnectedPoint pdfConnectedPoint = [PEUtils PDFConnectedPointWithAbsConnectedPoint:connectingLine.endPoint absBoundsRect:artboardsRect scale:scale];
             CGPoint endPoint = [PEUtils offsetPDFPoint:pdfConnectedPoint.point side:connectingLine.endPoint.side offset:kConnectingEndPointOffset + kArrowSize.height];
             
             // curve
@@ -597,7 +608,7 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
 }
 
 - (MSImmutableLayer *)layerWithID:(NSString *)layerID {
-    return [PEUtils immutableLayerWithID:layerID documentData:self.documentData];
+    return [PESketchMethods immutableLayerWithID:layerID documentData:self.documentData];
 }
 
 @end

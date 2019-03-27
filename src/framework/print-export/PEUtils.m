@@ -13,6 +13,8 @@
 #import "MSExportManager.h"
 #import "MSImmutableLayer.h"
 #import "MSLayer.h"
+#import "MSDocument.h"
+#import "PESketchMethods.h"
 
 CGFloat PEMMToUnit(CGFloat millimeter) {
     return (millimeter / 25.4) * 72;
@@ -24,56 +26,13 @@ CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat height) {
 
 @implementation PEUtils
 
-+ (CGPDFDocumentRef)createPDFPageOfArtboard:(MSImmutableArtboardGroup *)artboard documentData:(MSImmutableDocumentData *)documentData {
-    Class cls = NSClassFromString(kMSImmutableLayerAncestry);
-    MSImmutableLayerAncestry * layerAncestry = [cls alloc];
-    SEL selector = NSSelectorFromString(@"initWithLayer:document:");
-    typedef MSImmutableLayerAncestry* (*MethodType1)(MSImmutableLayerAncestry *, SEL, MSImmutableLayer *, MSImmutableDocumentData *);
-    MethodType1 method1 = (MethodType1)[layerAncestry methodForSelector:selector];
-    layerAncestry = method1(layerAncestry, selector, artboard, documentData);
++ (CGImageRef)imageOfArtboard:(MSImmutableArtboardGroup *)artboard scale:(double)scale targetColorSpace:(NSColorSpace *)targetColorSpace
+                    documentData:(MSImmutableDocumentData *)documentData {
     
-    selector = NSSelectorFromString(@"formatWithScale:name:fileFormat:");
-    typedef id (*MethodType2)(Class, SEL, double, NSString *, NSString *);
-    cls = NSClassFromString(kMSExportFormat);
-    MethodType2 method2 = (MethodType2)[cls methodForSelector:selector];
-    id exportFormat = method2(cls, selector, 1, @"", @"pdf");
-    
-    selector = NSSelectorFromString(@"exportRequestsFromLayerAncestry:exportFormats:");
-    typedef NSArray * (*MethodType3)(Class, SEL, MSImmutableLayerAncestry *, NSArray *);
-    cls = NSClassFromString(kMSExportRequest);
-    MethodType3 method3 = (MethodType3)[cls methodForSelector:selector];
-    NSArray *exportRequests = method3(cls, selector, layerAncestry, @[exportFormat]);
-    MSExportRequest *exportRequest = exportRequests.firstObject;
-    [exportRequest setValue:[NSNumber numberWithBool:YES] forKey:@"includeArtboardBackground"];
-    
-    cls = NSClassFromString(kMSExportManager);
-    MSExportManager *exportManager = [cls alloc];
-    selector = NSSelectorFromString(@"init");
-    typedef MSExportManager* (*MethodType4)(MSExportManager *, SEL);
-    MethodType4 method4 = (MethodType4)[exportManager methodForSelector:selector];
-    exportManager = method4(exportManager, selector);
-    
-    selector = NSSelectorFromString(@"exportedDataForRequest:");
-    typedef NSData * (*MethodType5)(MSExportManager *, SEL, MSExportRequest *);
-    MethodType5 method5 = (MethodType5)[exportManager methodForSelector:selector];
-    NSData *data = method5(exportManager, selector, exportRequest);
-    
-    CFDataRef cfData = CFDataCreate(kCFAllocatorDefault, data.bytes, data.length);
-    CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(cfData);
-    CFRelease(cfData);
-    CGPDFDocumentRef PDF = CGPDFDocumentCreateWithProvider(dataProvider);
-    CFRelease(dataProvider);
-    return PDF;
-}
-
-+ (MSImmutableLayer*)immutableLayerWithID:(NSString *)layerID documentData:(MSDocumentData *)documentData {
-    if (layerID == nil) {
-        return nil;
-    }
-    SEL selector = NSSelectorFromString(@"layerWithID:");
-    typedef MSLayer * (*MethodType)(MSDocumentData *, SEL, NSString *);
-    MethodType method = (MethodType)[documentData methodForSelector:selector];
-    return ((MSLayer*)method(documentData, selector, layerID)).immutableModelObject;
+    NSData *data = [PESketchMethods imageDataOfLayer:artboard scale:scale documentData:documentData];
+    NSBitmapImageRep *imageRep = [NSBitmapImageRep imageRepWithData:data];
+    NSBitmapImageRep *convertedImageRep = [imageRep bitmapImageRepByConvertingToColorSpace:targetColorSpace renderingIntent:NSColorRenderingIntentDefault];
+    return convertedImageRep.CGImage;
 }
 
 + (CGSize)fitSize:(CGSize)sourceSize inSize:(CGSize)targetSize {
@@ -129,16 +88,16 @@ CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat height) {
     return sqrt(pow(point1.x - point2.x, 2) + pow(point1.y - point2.y, 2));
 }
 
-+ (CGPoint)PDFPointWithAbsPoint:(CGPoint)absPoint artboardsRect:(CGRect)artboardsRect scale:(CGFloat)scale {
-    return CGPointMake((absPoint.x - artboardsRect.origin.x) * scale, (artboardsRect.size.height - (absPoint.y - artboardsRect.origin.y)) * scale);
++ (CGPoint)PDFPointWithAbsPoint:(CGPoint)absPoint absBoundsRect:(CGRect)absBoundsRect scale:(CGFloat)scale {
+    return CGPointMake((absPoint.x - absBoundsRect.origin.x) * scale, (absBoundsRect.size.height - (absPoint.y - absBoundsRect.origin.y)) * scale);
 }
 
-+ (PEConnectedPoint)PDFConnectedPointWithAbsConnectedPoint:(PEConnectedPoint)absConnectedPoint artboardsRect:(CGRect)artboardsRect scale:(CGFloat)scale {
-    return PEConnectedPointMake([self PDFPointWithAbsPoint:absConnectedPoint.point artboardsRect:artboardsRect scale:scale], absConnectedPoint.side);
++ (PEConnectedPoint)PDFConnectedPointWithAbsConnectedPoint:(PEConnectedPoint)absConnectedPoint absBoundsRect:(CGRect)absBoundsRect scale:(CGFloat)scale {
+    return PEConnectedPointMake([self PDFPointWithAbsPoint:absConnectedPoint.point absBoundsRect:absBoundsRect scale:scale], absConnectedPoint.side);
 }
 
-+ (CGRect)PDFRectWithAbsRect:(CGRect)absRect artboardsRect:(CGRect)artboardsRect scale:(CGFloat)scale {
-    return CGRectMake((absRect.origin.x - artboardsRect.origin.x) * scale, (artboardsRect.size.height - (absRect.origin.y - artboardsRect.origin.y)) * scale,
++ (CGRect)PDFRectWithAbsRect:(CGRect)absRect absBoundsRect:(CGRect)absBoundsRect scale:(CGFloat)scale {
+    return CGRectMake((absRect.origin.x - absBoundsRect.origin.x) * scale, (absBoundsRect.size.height - (absRect.origin.y - absBoundsRect.origin.y)) * scale,
                       absRect.size.width * scale, -absRect.size.height * scale);
 }
 
@@ -155,9 +114,6 @@ CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat height) {
             
         case PESideLeft:
             return CGPointMake(point.x - offset, point.y);
-            
-        default:
-            return point;
     }
 }
 
@@ -190,9 +146,6 @@ CGRect PEMMRectToUnitRect(CGFloat x, CGFloat y, CGFloat width, CGFloat height) {
             
         case PESideLeft:
             point = CGPointMake(rect.origin.x, rect.origin.y + rect.size.height / 2.0);
-            break;
-            
-        default:
             break;
     }
     

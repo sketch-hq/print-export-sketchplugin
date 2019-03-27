@@ -8,9 +8,11 @@
 
 #import <AppKit/AppKit.h>
 #import "MSDocumentData.h"
+#import "MSContentDrawViewController.h"
 
 @interface MSDocument: NSDocument
 
-@property(retain, nonatomic) MSDocumentData *documentData;
+@property (readonly, nonatomic) MSDocumentData *documentData;
+@property (readonly, nonatomic) MSContentDrawViewController *currentContentViewController;
 
 @end
