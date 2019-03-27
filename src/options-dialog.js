@@ -77,7 +77,7 @@ module.exports = class OptionsDialog {
     this.nib.bleed.doubleValue = model.bleed
     this.nib.slug.doubleValue = model.slug
 
-    this.dialog = buildDialog(pluginName, 'Export', this.nib.rootView, context)
+    this.dialog = buildDialog(pluginName, 'Continue', this.nib.rootView, context)
   }
 
   exportTypeChanged() {

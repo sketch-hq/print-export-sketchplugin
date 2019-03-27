@@ -293,7 +293,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "FRAMEWORK=\"print_export.framework\"\nPLUGIN_FILENAME=\"print-export.sketchplugin\"\n\ncp -R $BUILT_PRODUCTS_DIR/$FRAMEWORK $SRCROOT/../../$PLUGIN_FILENAME/Contents/Resources/\n\nosascript -e 'quit app \"Sketch\"'\nsleep 4\nopen -a \"/Applications/Sketch.app\"\n\n";
+			shellScript = "FRAMEWORK=\"print_export.framework\"\nPLUGIN_FILENAME=\"print-export.sketchplugin\"\n\ncp -R $BUILT_PRODUCTS_DIR/$FRAMEWORK $SRCROOT/../../$PLUGIN_FILENAME/Contents/Resources/\n\nif [ $COMMAND_LINE_BUILD -eq 0 ]; then\n    osascript -e 'quit app \"Sketch\"'\n    sleep 4\n    open -a \"/Applications/Sketch.app\"\nfi\n\n";
 		};
 		8700C1F07C1BA4654B4A6F0A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
