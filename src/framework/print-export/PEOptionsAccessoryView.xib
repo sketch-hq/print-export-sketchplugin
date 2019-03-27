@@ -16,16 +16,16 @@
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="aLI-tD-1Lg" userLabel="Export type">
                     <rect key="frame" x="0.0" y="380" width="298" height="36"/>
                     <subviews>
-                        <button identifier="artboardPerPage" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4zm-nH-mSI">
+                        <button identifier="sketchPagePerPage" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nqr-HV-fXD">
                             <rect key="frame" x="-1" y="19" width="301" height="18"/>
-                            <buttonCell key="cell" type="radio" title="Artboard per PDF page" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="keP-oi-GJO">
+                            <buttonCell key="cell" type="radio" title="Sketch page per PDF page" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="H9x-xS-62r">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
                         </button>
-                        <button identifier="sketchPagePerPage" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nqr-HV-fXD">
+                        <button identifier="artboardPerPage" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4zm-nH-mSI">
                             <rect key="frame" x="-1" y="-1" width="301" height="18"/>
-                            <buttonCell key="cell" type="radio" title="Sketch page per PDF page" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="H9x-xS-62r">
+                            <buttonCell key="cell" type="radio" title="Artboard per PDF page" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="keP-oi-GJO">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -33,10 +33,10 @@
                     </subviews>
                     <constraints>
                         <constraint firstItem="4zm-nH-mSI" firstAttribute="leading" secondItem="aLI-tD-1Lg" secondAttribute="leading" id="CfU-Y6-eao"/>
-                        <constraint firstItem="nqr-HV-fXD" firstAttribute="top" secondItem="4zm-nH-mSI" secondAttribute="bottom" constant="4" id="H8z-0L-xGO"/>
-                        <constraint firstItem="4zm-nH-mSI" firstAttribute="top" secondItem="aLI-tD-1Lg" secondAttribute="top" id="Jrz-Xg-cFy"/>
+                        <constraint firstAttribute="bottom" secondItem="4zm-nH-mSI" secondAttribute="bottom" id="FjM-75-Xj8"/>
+                        <constraint firstItem="nqr-HV-fXD" firstAttribute="top" secondItem="aLI-tD-1Lg" secondAttribute="top" id="P6Y-7u-clu"/>
+                        <constraint firstItem="4zm-nH-mSI" firstAttribute="top" secondItem="nqr-HV-fXD" secondAttribute="bottom" constant="4" id="Q7q-2N-nPS"/>
                         <constraint firstAttribute="trailing" secondItem="nqr-HV-fXD" secondAttribute="trailing" id="UgH-HS-qo2"/>
-                        <constraint firstAttribute="bottom" secondItem="nqr-HV-fXD" secondAttribute="bottom" id="WTY-gx-iSW"/>
                         <constraint firstAttribute="trailing" secondItem="4zm-nH-mSI" secondAttribute="trailing" id="acP-WH-bgP"/>
                         <constraint firstItem="nqr-HV-fXD" firstAttribute="leading" secondItem="aLI-tD-1Lg" secondAttribute="leading" id="tKE-Po-Y9o"/>
                     </constraints>

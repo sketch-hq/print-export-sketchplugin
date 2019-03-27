@@ -9,8 +9,8 @@
 #import <Foundation/Foundation.h>
 
 typedef NS_ENUM(NSUInteger, PEExportType) {
-    PEExportTypeArtboardPerPage,
-    PEExportTypeSketchPagePerPage
+    PEExportTypeSketchPagePerPage,
+    PEExportTypeArtboardPerPage
 };
 
 typedef NS_ENUM(NSUInteger, PEScope) {

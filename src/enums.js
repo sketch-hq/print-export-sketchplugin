@@ -9,8 +9,8 @@ export const Orientation = {
 }
 
 export const ExportType = {
-  ArtboardPerPage: 0,
-  SketchPagePerPage: 1
+  SketchPagePerPage: 0,
+  ArtboardPerPage: 1
 }
 
 export const Scope = {

@@ -62,7 +62,7 @@ const frameworkClass = function() {
 const getSettings = function(document) {
   const settings = {}
   settings.exportType = Settings.documentSettingForKey(document, SETTINGS_KEY.EXPORT_TYPE) || Settings.settingForKey(SETTINGS_KEY.EXPORT_TYPE)
-    || ExportType.ArtboardPerPage
+    || ExportType.SketchPagePerPage
   settings.scope = Settings.documentSettingForKey(document, SETTINGS_KEY.SCOPE) || Settings.settingForKey(SETTINGS_KEY.SCOPE) || Scope.CurrentPage
   settings.showArtboardShadow = Settings.documentSettingForKey(document, SETTINGS_KEY.SHOW_ARTBOARD_SHADOW) || Settings.settingForKey(SETTINGS_KEY.SHOW_ARTBOARD_SHADOW) || true
   settings.showArtboardName = Settings.documentSettingForKey(document, SETTINGS_KEY.SHOW_ARTBOARD_NAME) || Settings.settingForKey(SETTINGS_KEY.SHOW_ARTBOARD_NAME) || false
