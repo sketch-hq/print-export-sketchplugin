@@ -1,5 +1,6 @@
 const ObjClass = require('cocoascript-class').default;
 const manifest = require('./manifest.json')
+const path = require('path')
 
 export function loadNib(nibName, delegate = undefined) {
   const bundle = NSBundle.bundleWithIdentifier(manifest.identifier)
@@ -51,19 +52,8 @@ export function loadFramework(framework, frameworkClassName, context) {
   return true
 }
 
-export function getFilename(path, extension = undefined) {
-  const startIndex = path.lastIndexOf('/')
-  if (startIndex === -1) {
-    return null
-  }
-  if (extension === undefined) {
-    return path.substring(startIndex + 1)
-  }
-  let endIndex = path.indexOf('.', startIndex + 1)
-  if (endIndex === -1) {
-    endIndex = path.length
-  }
-  return `${path.substring(startIndex + 1, endIndex)}${extension}`
+export function getFilename(filePath, extension) {
+  return `${path.basename(filePath, path.extname(filePath))}${extension}`
 }
 
 export function valueWithPropertyPath(object, keyPath) {

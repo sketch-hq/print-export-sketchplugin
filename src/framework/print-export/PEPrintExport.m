@@ -21,8 +21,8 @@
 #import <NSLogger/NSLogger.h>
 #import "PESketchMethods.h"
 
-static const CGFloat kCropMarkLength = 5; // millimeters
-static const CGFloat kPageMargin = 20; // millimeters
+static const CGFloat kCropMarkLength = 3; // millimeters
+static const CGFloat kPageMargin = 15; // millimeters, only applies to Sketch page per PDF page
 static const CGFloat kImageResolution = 300; // dpi
 static NSString *const kFontName = @"Helvetica Neue";
 
@@ -57,7 +57,6 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
 @property (readonly, nonatomic) CGFloat slugBleed;
 @property (readonly, nonatomic) CGFloat cropMarkLength;
 @property (readonly, nonatomic) CGFloat pageMargin;
-@property (readonly, nonatomic) CGSize maxPageSize;
 @property (readonly, nonatomic) CGColorSpaceRef colorSpace;
 
 @end
@@ -111,7 +110,6 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
         _auxiliaryInfo = [self createAuxiliaryInfoWithOptions:self.options];
         _pageMargin = PEMMToUnit(kPageMargin);
         _slugBleed = self.options.slug + self.options.bleed;
-        _maxPageSize = CGSizeMake(self.options.pageSize.width - (self.pageMargin * 2), self.options.pageSize.height - (self.pageMargin * 2));
         _colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericCMYK);
     }
     return self;
@@ -210,13 +208,10 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
         if (self.options.hasCropMarks) {
             [self drawCropMarksWithContext:ctx];
         }
-        CGSize targetSize = [PEUtils fitSize:artboard.rect.size inSize:self.maxPageSize];
+        CGSize targetSize = [PEUtils fitSize:artboard.rect.size inSize:self.options.pageSize];
         CGContextSaveGState(ctx);
         CGRect targetRect = CGRectMake((self.mediaBox.size.width - targetSize.width) / 2.0, (self.mediaBox.size.height - targetSize.height) / 2.0, targetSize.width, targetSize.height);
         CGContextTranslateCTM(ctx, targetRect.origin.x, targetRect.origin.y);
-        if (self.options.showArboardShadow) {
-            [self drawArtboardShadowWithArtboard:artboard rect:CGRectMake(0, 0, targetSize.width, targetSize.height) scale:1 context:ctx];
-        }
         double imageScale = (targetSize.width / 72 * kImageResolution) / artboard.rect.size.width;
         if (imageScale < 1) {
             imageScale = 1;
@@ -224,9 +219,6 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
         CGImageRef artboardImage = [PEUtils imageOfArtboard:artboard scale:imageScale targetColorSpace:nsColorSpace documentData:self.immutableDocumentData];
         CGContextDrawImage(ctx, CGRectMake(0, 0, targetSize.width, targetSize.height), artboardImage);
         CGContextRestoreGState(ctx);
-        if (self.options.showArboardName) {
-            [self drawLabel:artboard.name position:CGPointMake(targetRect.origin.x + targetRect.size.width / 2.0, targetRect.origin.y - 30) size:12 context:ctx];
-        }
         CGContextRestoreGState(ctx);
         CGContextEndPage(ctx);
     }
@@ -248,7 +240,8 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
         [self drawCropMarksWithContext:ctx];
     }
     CGRect artboardsRect = [self boundsOfArtboardsInPage:page];
-    CGSize targetSize = [PEUtils fitSize:artboardsRect.size inSize:self.maxPageSize];
+    CGSize maxPageSize = CGSizeMake(self.options.pageSize.width - (self.pageMargin * 2), self.options.pageSize.height - (self.pageMargin * 2));
+    CGSize targetSize = [PEUtils fitSize:artboardsRect.size inSize:maxPageSize];
     CGPoint origin = CGPointMake((self.mediaBox.size.width - targetSize.width) / 2.0, (self.mediaBox.size.height - targetSize.height) / 2.0);
     CGContextTranslateCTM(ctx, origin.x, origin.y);
     CGFloat scale = targetSize.width / artboardsRect.size.width;

@@ -73,16 +73,24 @@ module.exports = class OptionsDialog {
         break;
     }
 
+    this.includeCropMarksChanged = this.includeCropMarksChanged.bind(this)
+    this.nib.includeCropMarks.setCOSJSTargetFunction(this.includeCropMarksChanged)
     this.nib.includeCropMarks.state = model.includeCropMarks ? NSOnState : NSOffState
+    this.includeCropMarksChanged()
 
     this.nib.bleed.doubleValue = model.bleed
+    this.nib.bleed.toolTip = 'The area beyond the trimmed page'
     this.nib.slug.doubleValue = model.slug
+    this.nib.slug.toolTip = 'The area beyond the bleed that contains the crop marks'
 
-    this.dialog = buildDialog(pluginName, 'Continue', this.nib.rootView, context)
+    this.dialog = buildDialog(pluginName, 'Export', this.nib.rootView, context)
   }
 
   exportTypeChanged() {
-    this.nib.showPrototypingLinks.enabled = this.exportType === ExportType.SketchPagePerPage
+    const enabled = this.exportType === ExportType.SketchPagePerPage
+    this.nib.showPrototypingLinks.enabled = enabled
+    this.nib.showArtboardShadow.enabled = enabled
+    this.nib.showArtboardName.enabled = enabled
   }
 
   paperSizeStandardChanged(sender) {
@@ -116,6 +124,12 @@ module.exports = class OptionsDialog {
     const height = this.nib.pageHeight.doubleValue()
     this.nib.pageWidth.doubleValue = height
     this.nib.pageHeight.doubleValue = width
+  }
+
+  includeCropMarksChanged() {
+    if (self.includeCropMarks && this.nib.slug.doubleValue() === 0) {
+      this.nib.slug.doubleValue = 5
+    }
   }
 
   populatePageSizes(pageSizePopUpButton, paperSizeStandard, pageSizeName = undefined) {
