@@ -52,6 +52,7 @@ module.exports = class OptionsDialog {
     this.paperSizeStandardChanged = this.paperSizeStandardChanged.bind(this)
     this.nib.paperSizeStandard.setCOSJSTargetFunction(this.paperSizeStandardChanged)
 
+    this.currentPageSizeIndices = []
     this.populatePageSizes(this.nib.pageSize, currentPaperSizeStandard, model.pageSizeName)
     this.pageSizeChanged = this.pageSizeChanged.bind(this)
     this.nib.pageSize.setCOSJSTargetFunction(this.pageSizeChanged)
@@ -107,6 +108,7 @@ module.exports = class OptionsDialog {
     }
     this.nib.pageWidth.doubleValue = width
     this.nib.pageHeight.doubleValue = height
+    this.currentPageSizeIndices[this.nib.paperSizeStandard.indexOfSelectedItem()] = this.nib.pageSize.indexOfSelectedItem()
   }
 
   orientationChanged() {
@@ -122,6 +124,13 @@ module.exports = class OptionsDialog {
       pageSizePopUpButton.addItemWithTitle(pageSize.name)
       if (pageSizeName === pageSize.name) {
         pageSizePopUpButton.selectItemAtIndex(index)
+        this.currentPageSizeIndices[this.nib.paperSizeStandard.indexOfSelectedItem()] = index
+      }
+    }
+    if (pageSizeName === undefined) {
+      const index = this.currentPageSizeIndices[this.nib.paperSizeStandard.indexOfSelectedItem()];
+      if (index !== undefined) {
+        pageSizePopUpButton.selectItemAtIndex(index);
       }
     }
   }

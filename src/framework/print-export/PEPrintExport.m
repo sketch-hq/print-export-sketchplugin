@@ -58,7 +58,7 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
 @property (readonly, nonatomic) CGFloat cropMarkLength;
 @property (readonly, nonatomic) CGFloat pageMargin;
 @property (readonly, nonatomic) CGSize maxPageSize;
-@property (strong, nonatomic) __attribute__((NSObject)) CGColorSpaceRef colorSpace;
+@property (readonly, nonatomic) CGColorSpaceRef colorSpace;
 
 @end
 
@@ -112,13 +112,14 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
         _pageMargin = PEMMToUnit(kPageMargin);
         _slugBleed = self.options.slug + self.options.bleed;
         _maxPageSize = CGSizeMake(self.options.pageSize.width - (self.pageMargin * 2), self.options.pageSize.height - (self.pageMargin * 2));
-        self.colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericCMYK);
+        _colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericCMYK);
     }
     return self;
 }
 
 - (void)dealloc {
     CFRelease(self.auxiliaryInfo);
+    CGColorSpaceRelease(self.colorSpace);
 }
 
 - (CGContextRef)createContext {
