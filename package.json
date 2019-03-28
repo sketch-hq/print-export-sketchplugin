@@ -1,6 +1,6 @@
 {
   "name": "print-export",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Export artboards or pages to a PDF for printing",
   "engines": {
     "sketch": ">=3.0"
