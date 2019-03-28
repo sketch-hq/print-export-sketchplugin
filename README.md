@@ -22,5 +22,5 @@ Exports artboards to a CMYK PDF which can then be printed. Each page in the PDF 
 - Specify your options and press Continue
 - Then specify a filename and location of the PDF file and press Export
 
-In the options dialog you can specify bleed and slug. Bleed is the area beyond the trimmed page while slug is the area beyond the bleed. If you don't want to include either you can enter 0. The size of the page specified is the size of the trimmed area.
+In the options dialog you can specify bleed and slug. Bleed is the area beyond the trimmed page while slug is the area beyond the bleed which contains the crop marks. If you don't want to include either you can enter 0. The size of the page specified is the size of the trimmed area.
 
