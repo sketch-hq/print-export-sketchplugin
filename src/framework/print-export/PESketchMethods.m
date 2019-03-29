@@ -77,4 +77,11 @@
     }
 }
 
++ (MSImmutableLayerGroup *)detachedLayerGroupRecursively:(BOOL)recursively withDocument:(MSImmutableDocumentData *)documentData symbolInstance:(MSImmutableSymbolInstance *)symbolInstance {
+    SEL selector = NSSelectorFromString(@"detachedLayerGroupRecursively:withDocument:visitedSymbols:");
+    typedef id (*MethodType)(MSImmutableSymbolInstance *, SEL, BOOL, MSImmutableDocumentData *, id);
+    MethodType method = (MethodType)[symbolInstance methodForSelector:selector];
+    return method(symbolInstance, selector, recursively, documentData, nil);
+}
+
 @end

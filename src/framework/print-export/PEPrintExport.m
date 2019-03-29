@@ -575,12 +575,18 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
         }
         [flowConnections addObject:flowConnection];
     }
-        
-    if ([layer isKindOfClass:NSClassFromString(kMSImmutableLayerGroup)]) {
-        MSImmutableLayerGroup *layerGroup = (MSImmutableLayerGroup *)layer;
+    
+    BOOL isSymbolInstance = [layer isMemberOfClass:NSClassFromString(kMSImmutableSymbolInstance)];
+    if ([layer isKindOfClass:NSClassFromString(kMSImmutableLayerGroup)] || isSymbolInstance) {
+        MSImmutableLayerGroup *layerGroup = nil;
+        if (isSymbolInstance) {
+            layerGroup = [PESketchMethods detachedLayerGroupRecursively:YES withDocument:self.immutableDocumentData symbolInstance:(MSImmutableSymbolInstance *)layer];
+        } else {
+            layerGroup = (MSImmutableLayerGroup *)layer;
+        }
         for (MSImmutableLayer *childLayer in layerGroup.layers) {
-            CGPoint childParentOrigin = CGPointMake(parentOrigin.x + childLayer.rect.origin.x, parentOrigin.y + childLayer.rect.origin.y);
-            [self buildFlowConnections:flowConnectionsByArtboardID layer:childLayer parentOrigin:childParentOrigin parentArtboardID:parentArtboardID];
+            CGPoint tOrigin = CGPointMake(parentOrigin.x + layerGroup.rect.origin.x, parentOrigin.y + layerGroup.rect.origin.y);
+            [self buildFlowConnections:flowConnectionsByArtboardID layer:childLayer parentOrigin:tOrigin parentArtboardID:parentArtboardID];
         }
     }
 }

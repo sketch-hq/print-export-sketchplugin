@@ -78,6 +78,7 @@
 		4DF78E82224BC795004024B0 /* MSFlashController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSFlashController.h; sourceTree = "<group>"; };
 		4DF78E83224BC8B8004024B0 /* PESketchMethods.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PESketchMethods.h; sourceTree = "<group>"; };
 		4DF78E84224BC8B8004024B0 /* PESketchMethods.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PESketchMethods.m; sourceTree = "<group>"; };
+		4DF78E87224E2738004024B0 /* MSImmutableSymbolInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MSImmutableSymbolInstance.h; sourceTree = "<group>"; };
 		934C9379DCA27F4889B1A21D /* Pods-print-export.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-print-export.debug.xcconfig"; path = "Pods/Target Support Files/Pods-print-export/Pods-print-export.debug.xcconfig"; sourceTree = "<group>"; };
 		B214E39896F61EE9287DCC38 /* libPods-print-export.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-print-export.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F87F0855D9C588A6689F6891 /* Pods-print-export.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-print-export.release.xcconfig"; path = "Pods/Target Support Files/Pods-print-export/Pods-print-export.release.xcconfig"; sourceTree = "<group>"; };
@@ -161,6 +162,7 @@
 				4DB8D68B2244ED1000670BC0 /* MSImmutableModelObject.h */,
 				4DB8D6872244ED1000670BC0 /* MSImmutablePage.h */,
 				4DB8D68C2244ED1100670BC0 /* MSImmutableStyledLayer.h */,
+				4DF78E87224E2738004024B0 /* MSImmutableSymbolInstance.h */,
 				4DF78E7F22492AA7004024B0 /* MSLayer.h */,
 				4DB8D6982244F4D700670BC0 /* MSModelObject.h */,
 				4DB8D69A2244F51D00670BC0 /* MSPage.h */,
