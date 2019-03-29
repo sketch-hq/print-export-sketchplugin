@@ -225,14 +225,6 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
 }
 
 - (void)generateSketchPageWithPage:(MSImmutablePage*)page context:(CGContextRef)ctx {
-    NSDictionary<NSString *, NSArray<PEFlowConnection *> *> *flowConnectionsByArtboardID = nil;
-    NSArray<MSImmutableArtboardGroup *> *sortedArtboards = nil;
-    if (self.options.showPrototypingLinks) {
-        flowConnectionsByArtboardID = [self buildFlowConnectionsWithPage:page];
-        sortedArtboards = [self sortedArtboardsForSketchPageWithPage:page flowConnectionsByArtboardID:flowConnectionsByArtboardID];
-    } else {
-        sortedArtboards = page.artboards;
-    }
     CGContextBeginPage(ctx, NULL);
     [self setColorSpaceWithContext:ctx];
     CGContextSaveGState(ctx);
@@ -246,7 +238,7 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
     CGContextTranslateCTM(ctx, origin.x, origin.y);
     CGFloat scale = targetSize.width / artboardsRect.size.width;
     NSColorSpace *nsColorSpace = [[NSColorSpace alloc] initWithCGColorSpace:self.colorSpace];
-    for (MSImmutableArtboardGroup *artboard in sortedArtboards) {
+    for (MSImmutableArtboardGroup *artboard in page.artboards) {
         CGContextSaveGState(ctx);
         CGContextScaleCTM(ctx, scale, scale);
         CGContextTranslateCTM(ctx, artboard.rect.origin.x - artboardsRect.origin.x, artboardsRect.size.height - (artboard.rect.origin.y - artboardsRect.origin.y + artboard.rect.size.height));
@@ -261,7 +253,7 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
         CGContextDrawImage(ctx, CGRectMake(0, 0, artboard.rect.size.width, artboard.rect.size.height), artboardImage);
         CGContextRestoreGState(ctx);
         if (self.options.showPrototypingLinks) {
-            [self drawPrototypingLinksWithArtboard:artboard flowConnectionsByArtboardID:flowConnectionsByArtboardID artboardsRect:artboardsRect scale:scale context:ctx];
+            [self drawPrototypingLinksWithArtboard:artboard artboards:page.artboards artboardsRect:artboardsRect scale:scale context:ctx];
         }
         if (self.options.showArboardName) {
             CGPoint position = [PEUtils PDFPointWithAbsPoint:CGPointMake(artboard.rect.origin.x + artboard.rect.size.width / 2.0, artboard.rect.origin.y + artboard.rect.size.height + 40)
@@ -271,32 +263,6 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
     }
     CGContextRestoreGState(ctx);
     CGContextEndPage(ctx);
-}
-
-- (NSArray<MSImmutableArtboardGroup *> *)sortedArtboardsForSketchPageWithPage:(MSImmutablePage *)page
-                                                  flowConnectionsByArtboardID:(NSDictionary<NSString *, NSArray *> *)flowConnectionsByArtboardID {
-    return [page.artboards sortedArrayUsingComparator:^(MSImmutableArtboardGroup *artboard1, MSImmutableArtboardGroup *artboard2) {
-        BOOL artboard1HasPrototypingLinks = flowConnectionsByArtboardID[artboard1.objectID].count > 0;
-        BOOL artboard2HasPrototypingLinks = flowConnectionsByArtboardID[artboard2.objectID].count > 0;
-        if (artboard1HasPrototypingLinks && !artboard2HasPrototypingLinks) {
-            return NSOrderedAscending;
-        } else if (!artboard1HasPrototypingLinks && artboard2HasPrototypingLinks) {
-            return NSOrderedDescending;
-        } else {
-            if (artboard1.rect.origin.y < artboard2.rect.origin.y) {
-                return NSOrderedAscending;
-            } else if (artboard1.rect.origin.y > artboard2.rect.origin.y) {
-                return NSOrderedDescending;
-            } else {
-                if (artboard1.rect.origin.x < artboard2.rect.origin.x) {
-                    return NSOrderedAscending;
-                } else if (artboard1.rect.origin.x > artboard2.rect.origin.x) {
-                    return NSOrderedDescending;
-                }
-            }
-        }
-        return NSOrderedSame;
-    }];
 }
 
 - (void)drawCropMarksWithContext:(CGContextRef)ctx {
@@ -369,14 +335,27 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
     CFRelease(font);
 }
 
-- (void)drawPrototypingLinksWithArtboard:(MSImmutableArtboardGroup *)artboard flowConnectionsByArtboardID:(NSDictionary<NSString *, NSArray<PEFlowConnection *> *> *)flowConnectionsByArtboardID artboardsRect:(CGRect)artboardsRect scale:(CGFloat)scale context:(CGContextRef)ctx {
-    NSArray<PEFlowConnection *> *flowConnections = flowConnectionsByArtboardID[artboard.objectID];
+- (void)drawPrototypingLinksWithArtboard:(MSImmutableArtboardGroup *)artboard artboards:(NSArray<MSImmutableArtboardGroup *> *)artboards artboardsRect:(CGRect)artboardsRect
+                                   scale:(CGFloat)scale context:(CGContextRef)ctx {
+    NSArray<PEFlowConnection *> *flowConnections = [self buildFlowConnectionsWithArtboard:artboard];
     if (flowConnections.count == 0) {
         return;
     }
     CGContextSaveGState(ctx);
+    
+    // artboards clipping area
+    CGContextBeginPath(ctx);
+    CGContextAddRect(ctx, CGRectInfinite);
+    for (MSImmutableArtboardGroup *itArtboard in artboards) {
+        if (itArtboard != artboard) {
+            CGContextAddRect(ctx, [PEUtils PDFRectWithAbsRect:itArtboard.rect absBoundsRect:artboardsRect scale:scale]);
+        }
+    }
+    CGContextEOClip(ctx);
+    
     CGContextSetLineWidth(ctx, kPrototypingLinkWidth);
     CGContextSetStrokeColor(ctx, kPrototypingLinkColor);
+    
     for (PEFlowConnection *flowConnection in flowConnections) {
         MSImmutableArtboardGroup *destinationArtboard = (MSImmutableArtboardGroup *)[self layerWithID:flowConnection.destinationArtboardID];
         CGRect sourceAbsRect = CGRectMake(artboard.rect.origin.x + flowConnection.frame.origin.x, artboard.rect.origin.y + flowConnection.frame.origin.y,
@@ -554,25 +533,18 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
     return CGRectMake(minX.doubleValue, minY.doubleValue, maxX.doubleValue - minX.doubleValue, maxY.doubleValue - minY.doubleValue);
 }
 
-- (NSDictionary<NSString *, NSArray<PEFlowConnection *> *> *)buildFlowConnectionsWithPage:(MSImmutablePage *)page {
-    NSMutableDictionary<NSString *, NSMutableArray<PEFlowConnection *> *> *flowConnectionsByArtboardID = [NSMutableDictionary new];
-    for (MSImmutableArtboardGroup *artboard in page.artboards) {
-        for (MSImmutableLayer *layer in artboard.layers) {
-            [self buildFlowConnections:flowConnectionsByArtboardID layer:layer parentOrigin:CGPointZero parentArtboardID:artboard.objectID];
-        }
+- (NSArray<PEFlowConnection *> *)buildFlowConnectionsWithArtboard:(MSImmutableArtboardGroup *)artboard {
+    NSMutableArray<PEFlowConnection *> *flowConnections = [NSMutableArray new];
+    for (MSImmutableLayer *layer in artboard.layers) {
+        [self buildFlowConnections:flowConnections layer:layer parentOrigin:CGPointZero];
     }
-    return [flowConnectionsByArtboardID copy];
+    return [flowConnections copy];
 }
 
-- (void)buildFlowConnections:(NSMutableDictionary<NSString *, NSMutableArray<PEFlowConnection *> *> *)flowConnectionsByArtboardID layer:(MSImmutableLayer *)layer
-                parentOrigin:(CGPoint)parentOrigin parentArtboardID:(NSString *)parentArtboardID {
+- (void)buildFlowConnections:(NSMutableArray<PEFlowConnection *> *)flowConnections layer:(MSImmutableLayer *)layer
+                parentOrigin:(CGPoint)parentOrigin {
     if ([self hasFlowConnectionWithLayer:layer]) {
         PEFlowConnection *flowConnection = [self buildFlowConnectionWithLayer:layer parentOrigin:parentOrigin];
-        NSMutableArray *flowConnections = flowConnectionsByArtboardID[parentArtboardID];
-        if (flowConnections == nil) {
-            flowConnections = [NSMutableArray new];
-            flowConnectionsByArtboardID[parentArtboardID] = flowConnections;
-        }
         [flowConnections addObject:flowConnection];
     }
     
@@ -586,7 +558,7 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
         }
         for (MSImmutableLayer *childLayer in layerGroup.layers) {
             CGPoint tOrigin = CGPointMake(parentOrigin.x + layerGroup.rect.origin.x, parentOrigin.y + layerGroup.rect.origin.y);
-            [self buildFlowConnections:flowConnectionsByArtboardID layer:childLayer parentOrigin:tOrigin parentArtboardID:parentArtboardID];
+            [self buildFlowConnections:flowConnections layer:childLayer parentOrigin:tOrigin];
         }
     }
 }
