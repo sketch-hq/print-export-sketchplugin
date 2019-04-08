@@ -12,7 +12,8 @@ Exports artboards to a CMYK PDF which can then be printed. Each page in the PDF 
  
 ### From source
  
-- You will need to have [XCode](https://itunes.apple.com/app/xcode/id497799835?mt=12) installed
+- Install [Xcode](https://itunes.apple.com/app/xcode/id497799835?mt=12)
+- Install Xcode command line tools with `xcode-select --install`
 - Clone the repo
 - Install the dependencies with `npm install`
 
