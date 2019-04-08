@@ -8,6 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSDecimalFormatter : NSNumberFormatter
+@interface PEDecimalFormatter : NSNumberFormatter
 
 @end

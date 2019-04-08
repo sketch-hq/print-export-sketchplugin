@@ -6,13 +6,13 @@
 //  Copyright © 2019 Sketch. All rights reserved.
 //
 
-#import "NSDecimalFormatter.h"
+#import "PEDecimalFormatter.h"
 
 static NSRegularExpression *regExp;
 static const NSUInteger kMinimumFractionDigits = 0;
 static const NSUInteger kMaximumFractionDigits = 2;
 
-@implementation NSDecimalFormatter
+@implementation PEDecimalFormatter
 
 - (instancetype)init {
     if (self = [super init]) {
@@ -33,7 +33,7 @@ static const NSUInteger kMaximumFractionDigits = 2;
     return self;
 }
 
-- (BOOL)isPartialStringValid:(NSString*)partialString newEditingString:(NSString**)newString errorDescription:(NSString**)error {
+- (BOOL)isPartialStringValid:(NSString *)partialString newEditingString:(NSString **)newString errorDescription:(NSString **)error {
     if (partialString.length == 0) {
         return YES;
     }
