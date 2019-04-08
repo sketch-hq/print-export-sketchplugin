@@ -40,15 +40,15 @@ static NSString *const kOptionKeySlug = @"slug";
                 [NSException raise:@"Invalid options" format:@"%@ is missing from options", key];
             }
         }
-        _exportType = (PEExportType)((NSNumber*)options[kOptionKeyExportType]).unsignedIntegerValue;
-        _scope = (PEScope)((NSNumber*)options[kOptionKeyScope]).unsignedIntegerValue;
-        _showArboardShadow = ((NSNumber*)options[kOptionKeyShowArtboardShadow]).boolValue;
-        _showArboardName = ((NSNumber*)options[kOptionKeyShowArtboardName]).boolValue;
-        _showPrototypingLinks = ((NSNumber*)options[kOptionKeyShowPrototypingLinks]).boolValue;
-        _pageSize = CGSizeMake(PEMMToUnit(((NSNumber*)options[kOptionKeyPageWidth]).doubleValue), PEMMToUnit(((NSNumber*)options[kOptionKeyPageHeight]).doubleValue));
-        _includeCropMarks = ((NSNumber*)options[kOptionKeyIncludeCropMarks]).boolValue;
-        _bleed = PEMMToUnit(((NSNumber*)options[kOptionKeyBleed]).doubleValue);
-        _slug = PEMMToUnit(((NSNumber*)options[kOptionKeySlug]).doubleValue);
+        _exportType = (PEExportType)((NSNumber *)options[kOptionKeyExportType]).unsignedIntegerValue;
+        _scope = (PEScope)((NSNumber *)options[kOptionKeyScope]).unsignedIntegerValue;
+        _showArboardShadow = ((NSNumber *)options[kOptionKeyShowArtboardShadow]).boolValue;
+        _showArboardName = ((NSNumber *)options[kOptionKeyShowArtboardName]).boolValue;
+        _showPrototypingLinks = ((NSNumber *)options[kOptionKeyShowPrototypingLinks]).boolValue;
+        _pageSize = CGSizeMake(PEMMToUnit(((NSNumber *)options[kOptionKeyPageWidth]).doubleValue), PEMMToUnit(((NSNumber*)options[kOptionKeyPageHeight]).doubleValue));
+        _includeCropMarks = ((NSNumber *)options[kOptionKeyIncludeCropMarks]).boolValue;
+        _bleed = PEMMToUnit(((NSNumber *)options[kOptionKeyBleed]).doubleValue);
+        _slug = PEMMToUnit(((NSNumber *)options[kOptionKeySlug]).doubleValue);
     }
     return self;
 }

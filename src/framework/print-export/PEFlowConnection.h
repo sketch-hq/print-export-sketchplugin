@@ -17,6 +17,6 @@
 @property (readonly, nonatomic) NSString *destinationArtboardID;
 @property (readonly, nonatomic) BOOL isBackAction;
 
-- (instancetype)initWithType:(PEFlowConnectionType)type frame:(CGRect)frame destinationArtboardID:(NSString*)destinationArtboardID;
+- (instancetype)initWithType:(PEFlowConnectionType)type frame:(CGRect)frame destinationArtboardID:(NSString *)destinationArtboardID;
 
 @end

@@ -15,7 +15,7 @@
 
 @implementation PESketchMethods
 
-+ (NSData*)imageDataOfLayer:(MSImmutableLayer *)layer scale:(double)scale documentData:(MSImmutableDocumentData *)documentData {
++ (NSData *)imageDataOfLayer:(MSImmutableLayer *)layer scale:(double)scale documentData:(MSImmutableDocumentData *)documentData {
     Class cls = NSClassFromString(kMSImmutableLayerAncestry);
     MSImmutableLayerAncestry * layerAncestry = [cls alloc];
     SEL selector = NSSelectorFromString(@"initWithLayer:document:");

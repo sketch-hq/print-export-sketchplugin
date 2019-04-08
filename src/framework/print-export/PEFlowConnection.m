@@ -10,7 +10,7 @@
 
 @implementation PEFlowConnection
 
-- (instancetype)initWithType:(PEFlowConnectionType)type frame:(CGRect)frame destinationArtboardID:(NSString*)destinationArtboardID {
+- (instancetype)initWithType:(PEFlowConnectionType)type frame:(CGRect)frame destinationArtboardID:(NSString *)destinationArtboardID {
     if (self = [super init]) {
         _type = type;
         _frame = frame;

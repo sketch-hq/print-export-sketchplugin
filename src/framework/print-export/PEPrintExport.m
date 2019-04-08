@@ -100,7 +100,7 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
 
 # pragma mark - Private
 
-- (instancetype)initWithDocument:(MSDocument*)document fileURL:(NSURL *)fileURL options:(PEOptions*)options {
+- (instancetype)initWithDocument:(MSDocument *)document fileURL:(NSURL *)fileURL options:(PEOptions *)options {
     if (self = [super init]) {
         _documentData = document.documentData;
         _immutableDocumentData = document.documentData.immutableModelObject;
@@ -185,7 +185,7 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
     }
 }
 
-- (void)generateArtboardsWithPage:(MSImmutablePage*)page context:(CGContextRef)ctx {
+- (void)generateArtboardsWithPage:(MSImmutablePage *)page context:(CGContextRef)ctx {
     NSArray<MSImmutableArtboardGroup*> *sortedArtboards = [page.artboards sortedArrayUsingComparator:^(MSImmutableArtboardGroup *artboard1, MSImmutableArtboardGroup *artboard2) {
         if (artboard1.rect.origin.y < artboard2.rect.origin.y) {
             return NSOrderedAscending;
@@ -224,7 +224,7 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
     }
 }
 
-- (void)generateSketchPageWithPage:(MSImmutablePage*)page context:(CGContextRef)ctx {
+- (void)generateSketchPageWithPage:(MSImmutablePage *)page context:(CGContextRef)ctx {
     CGContextBeginPage(ctx, NULL);
     [self setColorSpaceWithContext:ctx];
     CGContextSaveGState(ctx);
@@ -316,7 +316,7 @@ static const CGFloat kPrototypingLinkWidth = 0.5;
     CGContextRestoreGState(ctx);
 }
 
-- (void)drawLabel:(NSString*)label position:(CGPoint)position size:(CGFloat)size context:(CGContextRef)ctx {
+- (void)drawLabel:(NSString *)label position:(CGPoint)position size:(CGFloat)size context:(CGContextRef)ctx {
     CTFontRef font = CTFontCreateWithName((__bridge CFStringRef)kFontName, size, NULL);
     CGColorRef color = CGColorCreate(self.colorSpace, kArtboardNameColor);
     CFStringRef keys[] = {kCTFontAttributeName, kCTForegroundColorAttributeName};

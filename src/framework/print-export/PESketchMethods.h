@@ -14,8 +14,8 @@
 
 @interface PESketchMethods : NSObject
 
-+ (NSData*)imageDataOfLayer:(MSImmutableLayer *)layer scale:(double)scale documentData:(MSImmutableDocumentData *)documentData;
-+ (MSImmutableLayer*)immutableLayerWithID:(NSString *)layerID documentData:(MSDocumentData *)documentData;
++ (NSData *)imageDataOfLayer:(MSImmutableLayer *)layer scale:(double)scale documentData:(MSImmutableDocumentData *)documentData;
++ (MSImmutableLayer *)immutableLayerWithID:(NSString *)layerID documentData:(MSDocumentData *)documentData;
 + (void)displayFlashMessage:(NSString *)message document:(MSDocument *)document;
 + (MSImmutableLayerGroup *)detachedLayerGroupRecursively:(BOOL)recursively withDocument:(MSImmutableDocumentData *)documentData symbolInstance:(MSImmutableSymbolInstance *)symbolInstance;
 
