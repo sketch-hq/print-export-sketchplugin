@@ -6,7 +6,7 @@ Exports artboards to a CMYK PDF which can then be printed. Each page in the PDF 
  
 ### From a release (simplest)
  
-- [Download](https://github.com/skpm/print-export-sketchplugin/releases/latest/download/print-export.sketchplugin.zip) the latest release of the plugin
+- [Download](https://github.com/BohemianCoding/print-export-sketchplugin/releases/latest/download/print-export.sketchplugin.zip) the latest release of the plugin
 - Double-click the .zip file to extract the plugin
 - Double-click `print-export.sketchplugin` to install the plugin
  

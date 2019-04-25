@@ -2,19 +2,19 @@
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
   <channel>
     <item>
-      <enclosure url="https://github.com/skpm/print-export-sketchplugin/releases/download/v1.0.1/print-export.sketchplugin.zip" sparkle:version="1.0.1"/>
+      <enclosure url="https://github.com/BohemianCoding/print-export-sketchplugin/releases/download/v1.0.1/print-export.sketchplugin.zip" sparkle:version="1.0.1"/>
     </item>
     <item>
-      <enclosure url="https://github.com/skpm/print-export-sketchplugin/releases/download/v1.0.0/print-export.sketchplugin.zip" sparkle:version="1.0.0"/>
+      <enclosure url="https://github.com/BohemianCoding/print-export-sketchplugin/releases/download/v1.0.0/print-export.sketchplugin.zip" sparkle:version="1.0.0"/>
     </item>
     <item>
-      <enclosure url="https://github.com/skpm/print-export-sketchplugin/releases/download/v0.4.0/print-export.sketchplugin.zip" sparkle:version="0.4.0"/>
+      <enclosure url="https://github.com/BohemianCoding/print-export-sketchplugin/releases/download/v0.4.0/print-export.sketchplugin.zip" sparkle:version="0.4.0"/>
     </item>
     <item>
-      <enclosure url="https://github.com/skpm/print-export-sketchplugin/releases/download/v0.3.0/print-export.sketchplugin.zip" sparkle:version="0.3.0"/>
+      <enclosure url="https://github.com/BohemianCoding/print-export-sketchplugin/releases/download/v0.3.0/print-export.sketchplugin.zip" sparkle:version="0.3.0"/>
     </item>
     <item>
-      <enclosure url="https://github.com/skpm/print-export-sketchplugin/releases/download/v0.2.0/print-export.sketchplugin.zip" sparkle:version="0.2.0"/>
+      <enclosure url="https://github.com/BohemianCoding/print-export-sketchplugin/releases/download/v0.2.0/print-export.sketchplugin.zip" sparkle:version="0.2.0"/>
     </item>
   </channel>
 </rss>
