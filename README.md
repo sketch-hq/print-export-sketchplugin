@@ -1,17 +1,22 @@
 # Print Export Plugin
 
-Exports artboards to a CMYK PDF which can then be printed. Each page in the PDF document can contain all the artboards in a page or just one artboard. 
+With this plugin you can export one Artboard per PDF page for printing, or export all Artboards on one Sketch page to a PDF to share User flows or prototyping overviews.
+
+You can choose to show Artboard names, shadows and prototyping links, export to a variety of standard paper sizes in landscape or portrait orientation, and even add bleed and crop marks.
+
+![Export options to export a Sketch document into a PDF](assets/screenshot.png)
+
 
 ## Installation
- 
+
 ### From a release (simplest)
- 
-- [Download](https://github.com/BohemianCoding/print-export-sketchplugin/releases/latest/download/print-export.sketchplugin.zip) the latest release of the plugin
-- Double-click the .zip file to extract the plugin
+
+- Download the [latest release](https://github.com/BohemianCoding/print-export-sketchplugin/releases/latest/download/print-export.sketchplugin.zip)  of the plugin
+- Double-click the .zip archive to extract the plugin
 - Double-click `print-export.sketchplugin` to install the plugin
- 
+
 ### From source
- 
+
 - Install [Xcode](https://itunes.apple.com/app/xcode/id497799835?mt=12)
 - Install Xcode command line tools with `xcode-select --install`
 - Clone the repo
@@ -19,9 +24,8 @@ Exports artboards to a CMYK PDF which can then be printed. Each page in the PDF 
 
 ## Usage
 
-- Open the Sketch file you want to generate a PDF from and then go to _Plugins > Print Export_.
-- Specify your options and press Export
-- Then specify a filename and location of the PDF file and press Export
+1. Open the Sketch file you want to generate a PDF from and then go to _Plugins > Print Export_.
+1. Choose your options and press Export
+1. Choose a name for your PDF file and the location you want to save it and press Export
 
-In the options dialog you can specify bleed and slug. Bleed is the area beyond the trimmed page while slug is the area beyond the bleed which contains the crop marks. If you don't want to include either you can enter 0. If you want the crop marks to show up, you will need to enter value greater than 0 for the slug. The size of the page specified is the size of the trimmed area.
-
+In the options dialog you can specify bleed and slug. Bleed is the area that's trimmed off the page after printing, while the slug is the area beyond the bleed that contains crop marks. If you don't want to include either of these in your export, enter 0. If you do want crop marks in your export, be sure to check the "Include crop marks option" and enter a value greater than 0 for the slug. The size of the page specified is the size of the trimmed area.
