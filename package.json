@@ -21,7 +21,7 @@
     "postinstall": "npm run build && xcodebuild build -workspace ./src/framework/print-export.xcworkspace -scheme 'print-export' -configuration release -quiet COMMAND_LINE_BUILD=1 && skpm-link"
   },
   "devDependencies": {
-    "@skpm/builder": "^0.5.11"
+    "@skpm/builder": "^0.7.0"
   },
   "author": "Sketch",
   "license": "MIT",
