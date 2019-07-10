@@ -1,5 +1,5 @@
 const { Orientation, Unit } = require('./enums')
-const { loadFramework, getFilename, valueWithPropertyPath } = require('./utils')
+const { getFilename, valueWithPropertyPath } = require('./utils')
 const Settings = require('sketch/settings')
 const { ExportType, Scope } = require('./enums')
 const { paperSizeStandards } = require('./constants')
@@ -38,27 +38,25 @@ const defaultValues = {
 }
 
 export default function(context) {
-  if (loadFramework('print_export', mainClassName, context)) {
-    const document = getSelectedDocument()
-    const optionsDialog = new OptionsDialog(pluginName, getSettings(document), context)
-    if (optionsDialog.dialog.runModal() === NSAlertFirstButtonReturn) {
-      setSettings(optionsDialog, document)
-      const filePath = getFilePath(optionsDialog.scope, document)
-      if (filePath != null) {
-        const options = {
-          exportType: optionsDialog.exportType,
-          scope: optionsDialog.scope,
-          showArtboardShadow: optionsDialog.showArtboardShadow,
-          showArtboardName: optionsDialog.showArtboardName,
-          showPrototypingLinks: optionsDialog.showPrototypingLinks,
-          pageWidth: normalizeDimension(optionsDialog.pageWidth, optionsDialog.paperSizeStandard),
-          pageHeight: normalizeDimension(optionsDialog.pageHeight, optionsDialog.paperSizeStandard),
-          includeCropMarks: optionsDialog.includeCropMarks,
-          bleed: normalizeDimension(optionsDialog.bleed, optionsDialog.paperSizeStandard),
-          slug: normalizeDimension(optionsDialog.slug, optionsDialog.paperSizeStandard)
-        }
-        frameworkClass().generatePDFWithDocument_filePath_options_context(document.sketchObject, filePath, options, context)
+  const document = getSelectedDocument()
+  const optionsDialog = new OptionsDialog(pluginName, getSettings(document), context)
+  if (optionsDialog.dialog.runModal() === NSAlertFirstButtonReturn) {
+    setSettings(optionsDialog, document)
+    const filePath = getFilePath(optionsDialog.scope, document)
+    if (filePath != null) {
+      const options = {
+        exportType: optionsDialog.exportType,
+        scope: optionsDialog.scope,
+        showArtboardShadow: optionsDialog.showArtboardShadow,
+        showArtboardName: optionsDialog.showArtboardName,
+        showPrototypingLinks: optionsDialog.showPrototypingLinks,
+        pageWidth: normalizeDimension(optionsDialog.pageWidth, optionsDialog.paperSizeStandard),
+        pageHeight: normalizeDimension(optionsDialog.pageHeight, optionsDialog.paperSizeStandard),
+        includeCropMarks: optionsDialog.includeCropMarks,
+        bleed: normalizeDimension(optionsDialog.bleed, optionsDialog.paperSizeStandard),
+        slug: normalizeDimension(optionsDialog.slug, optionsDialog.paperSizeStandard)
       }
+      frameworkClass().generatePDFWithDocument_filePath_options_context(document.sketchObject, filePath, options, context)
     }
   }
 }
@@ -68,7 +66,7 @@ export const onShutdown = function(context) {
 }
 
 const frameworkClass = function() {
-  return NSClassFromString(mainClassName)
+  return require('./framework/print-export.xcworkspace/contents.xcworkspacedata').getClass(mainClassName)
 }
 
 const getSettings = function(document) {
@@ -167,5 +165,3 @@ const getDefaultPageSize = function(paperSizeStandard) {
     return paperSizeStandard.sizes[0]
   }
 }
-
-
