@@ -226,7 +226,6 @@
 				4DA8CB322241369D00FC9D2D /* Sources */,
 				4DA8CB332241369D00FC9D2D /* Frameworks */,
 				4DA8CB342241369D00FC9D2D /* Resources */,
-				4DA8CB41224137F300FC9D2D /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -280,23 +279,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		4DA8CB41224137F300FC9D2D /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "FRAMEWORK=\"print_export.framework\"\nPLUGIN_FILENAME=\"print-export.sketchplugin\"\n\ncp -R $BUILT_PRODUCTS_DIR/$FRAMEWORK $SRCROOT/../../$PLUGIN_FILENAME/Contents/Resources/\n\nif [ $COMMAND_LINE_BUILD -eq 0 ]; then\n    osascript -e 'quit app \"Sketch\"'\n    sleep 4\n    open -a \"/Applications/Sketch.app\"\nfi\n\n";
-		};
 		8700C1F07C1BA4654B4A6F0A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -461,11 +443,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 934C9379DCA27F4889B1A21D /* Pods-print-export.debug.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COMMAND_LINE_BUILD = 0;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = WUGMZZ5K46;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -479,6 +462,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.sketch.print-export";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -487,11 +471,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F87F0855D9C588A6689F6891 /* Pods-print-export.release.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COMMAND_LINE_BUILD = 0;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = WUGMZZ5K46;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -505,6 +490,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.sketch.print-export";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;

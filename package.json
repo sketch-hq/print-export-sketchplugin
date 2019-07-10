@@ -1,6 +1,6 @@
 {
   "name": "print-export",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Export artboards or pages to a PDF for printing",
   "engines": {
     "sketch": ">=3.0"
@@ -17,11 +17,10 @@
     "build": "skpm-build",
     "watch": "skpm-build --watch",
     "start": "skpm-build --watch --run",
-    "prepublish": "npm run build && xcodebuild build -workspace ./src/framework/print-export.xcworkspace -scheme 'print-export' -configuration release -quiet COMMAND_LINE_BUILD=1",
-    "postinstall": "npm run build && xcodebuild build -workspace ./src/framework/print-export.xcworkspace -scheme 'print-export' -configuration release -quiet COMMAND_LINE_BUILD=1 && skpm-link"
+    "postinstall": "npm run build && skpm-link"
   },
   "devDependencies": {
-    "@skpm/builder": "^0.5.11"
+    "@skpm/builder": "^0.7.1"
   },
   "author": "Sketch",
   "license": "MIT",

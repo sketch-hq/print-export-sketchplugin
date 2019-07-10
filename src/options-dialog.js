@@ -1,4 +1,4 @@
-const { loadNib, buildDialog } = require('./utils')
+const { buildDialog } = require('./utils')
 const { ExportType, Scope, Orientation, Unit } = require('./enums')
 const { paperSizeStandards } = require('./constants')
 
@@ -7,7 +7,7 @@ const UNIT_TEXTFIELD_INDENTIFIERS = ['pageWidthUnits', 'pageHeightUnits', 'bleed
 module.exports = class OptionsDialog {
 
   constructor(pluginName, model, context) {
-    this.nib = loadNib('PEOptionsAccessoryView')
+    this.nib = require('./framework/print-export.xcworkspace/contents.xcworkspacedata').getNib('PEOptionsAccessoryView')
 
     this.exportTypeChanged = this.exportTypeChanged.bind(this)
     this.nib.artboardPerPage.setCOSJSTargetFunction(this.exportTypeChanged)
@@ -83,7 +83,7 @@ module.exports = class OptionsDialog {
     this.nib.slug.doubleValue = model.slug
     this.nib.slug.toolTip = 'The area beyond the bleed that contains the crop marks'
 
-    this.dialog = buildDialog(pluginName, 'Export', this.nib.rootView, context)
+    this.dialog = buildDialog(pluginName, 'Export', this.nib.getRoot(), context)
   }
 
   exportTypeChanged() {
