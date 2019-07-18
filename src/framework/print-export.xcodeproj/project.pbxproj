@@ -460,6 +460,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_CODE_SIGN_FLAGS = "--timestamp -o runtime";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.sketch.print-export";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -488,6 +489,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_CODE_SIGN_FLAGS = "--timestamp -o runtime";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.sketch.print-export";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
