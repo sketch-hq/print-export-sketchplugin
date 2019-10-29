@@ -84,12 +84,11 @@
         typedef id (*MethodType)(MSImmutableSymbolInstance *, SEL, BOOL, MSImmutableDocumentData *, NSSet *);
         MethodType method = (MethodType)[symbolInstance methodForSelector:selector];
         return method(symbolInstance, selector, recursively, documentData, nil);
-    } else {
-        selector = NSSelectorFromString(@"detachedLayerGroupRecursively:withDocument:resizeToNaturalSizeOnAxes:desiredWidth:visitedSymbols:skipCache:");
-        typedef id (*MethodType)(MSImmutableSymbolInstance *, SEL, BOOL, MSImmutableDocumentData *, int BCAxisMask, CGFloat, NSSet *, BOOL);
-        MethodType method = (MethodType)[symbolInstance methodForSelector:selector];
-        return method(symbolInstance, selector, recursively, documentData, 0, symbolInstance.rect.size.width, nil, NO);
     }
+    selector = NSSelectorFromString(@"detachedLayerGroupRecursively:withDocument:resizeToNaturalSizeOnAxes:desiredWidth:visitedSymbols:skipCache:");
+    typedef id (*MethodType)(MSImmutableSymbolInstance *, SEL, BOOL, MSImmutableDocumentData *, int BCAxisMask, CGFloat, NSSet *, BOOL);
+    MethodType method = (MethodType)[symbolInstance methodForSelector:selector];
+    return method(symbolInstance, selector, recursively, documentData, 0, symbolInstance.rect.size.width, nil, NO);
 }
 
 @end
