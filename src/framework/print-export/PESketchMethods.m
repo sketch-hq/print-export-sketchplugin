@@ -79,9 +79,16 @@
 
 + (MSImmutableLayerGroup *)detachedLayerGroupRecursively:(BOOL)recursively withDocument:(MSImmutableDocumentData *)documentData symbolInstance:(MSImmutableSymbolInstance *)symbolInstance {
     SEL selector = NSSelectorFromString(@"detachedLayerGroupRecursively:withDocument:visitedSymbols:");
-    typedef id (*MethodType)(MSImmutableSymbolInstance *, SEL, BOOL, MSImmutableDocumentData *, id);
+    // This only exists in Sketch 55 and earlier
+    if ([symbolInstance respondsToSelector:selector]) {
+        typedef id (*MethodType)(MSImmutableSymbolInstance *, SEL, BOOL, MSImmutableDocumentData *, NSSet *);
+        MethodType method = (MethodType)[symbolInstance methodForSelector:selector];
+        return method(symbolInstance, selector, recursively, documentData, nil);
+    }
+    selector = NSSelectorFromString(@"detachedLayerGroupRecursively:withDocument:resizeToNaturalSizeOnAxes:desiredWidth:visitedSymbols:skipCache:");
+    typedef id (*MethodType)(MSImmutableSymbolInstance *, SEL, BOOL, MSImmutableDocumentData *, int BCAxisMask, CGFloat, NSSet *, BOOL);
     MethodType method = (MethodType)[symbolInstance methodForSelector:selector];
-    return method(symbolInstance, selector, recursively, documentData, nil);
+    return method(symbolInstance, selector, recursively, documentData, 0, symbolInstance.rect.size.width, nil, NO);
 }
 
 @end
