@@ -11,7 +11,7 @@ You can choose to show Artboard names, shadows and prototyping links, export to 
 
 ### From a release (simplest)
 
-- Download the [latest release](https://github.com/BohemianCoding/print-export-sketchplugin/releases/latest/download/print-export.sketchplugin.zip)  of the plugin
+- Download the [latest release](https://github.com/sketch-hq/print-export-sketchplugin/releases/latest/download/print-export.sketchplugin.zip)  of the plugin
 - Double-click the .zip archive to extract the plugin
 - Double-click `print-export.sketchplugin` to install the plugin
 
