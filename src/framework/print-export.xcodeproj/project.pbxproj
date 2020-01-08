@@ -443,7 +443,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 934C9379DCA27F4889B1A21D /* Pods-print-export.debug.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COMMAND_LINE_BUILD = 0;
@@ -471,7 +470,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F87F0855D9C588A6689F6891 /* Pods-print-export.release.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COMMAND_LINE_BUILD = 0;
