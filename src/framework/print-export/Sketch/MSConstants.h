@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 extern NSString *const kMSImmutableLayerAncestry;
+extern NSString *const kMSImmutableLayerAncestry66;
 extern NSString *const kMSExportFormat;
 extern NSString *const kMSExportRequest;
 extern NSString *const kMSExportManager;

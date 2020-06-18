@@ -17,11 +17,23 @@
 
 + (NSData *)imageDataOfLayer:(MSImmutableLayer *)layer scale:(double)scale documentData:(MSImmutableDocumentData *)documentData {
     Class cls = NSClassFromString(kMSImmutableLayerAncestry);
-    MSImmutableLayerAncestry * layerAncestry = [cls alloc];
-    SEL selector = NSSelectorFromString(@"initWithLayer:ancestors:document:");
-    typedef MSImmutableLayerAncestry* (*MethodType1)(MSImmutableLayerAncestry *, SEL, MSImmutableLayer *, NSArray *, MSImmutableDocumentData *);
-    MethodType1 method1 = (MethodType1)[layerAncestry methodForSelector:selector];
-    layerAncestry = method1(layerAncestry, selector, layer, @[], documentData);
+    SEL selector;
+    MSImmutableLayerAncestry * layerAncestry;
+    if (cls == nil) {
+        // Sketch 66
+        cls = NSClassFromString(kMSImmutableLayerAncestry66);
+        layerAncestry = [cls alloc];
+        selector = NSSelectorFromString(@"initWithLayer:ancestors:document:");
+        typedef MSImmutableLayerAncestry* (*MethodType1)(MSImmutableLayerAncestry *, SEL, MSImmutableLayer *, NSArray *, MSImmutableDocumentData *);
+        MethodType1 method1 = (MethodType1)[layerAncestry methodForSelector:selector];
+        layerAncestry = method1(layerAncestry, selector, layer, @[], documentData);
+    } else {
+        layerAncestry = [cls alloc];
+        selector = NSSelectorFromString(@"initWithLayer:document:");
+        typedef MSImmutableLayerAncestry* (*MethodType1)(MSImmutableLayerAncestry *, SEL, MSImmutableLayer *, MSImmutableDocumentData *);
+        MethodType1 method1 = (MethodType1)[layerAncestry methodForSelector:selector];
+        layerAncestry = method1(layerAncestry, selector, layer, documentData);
+    }
 
     selector = NSSelectorFromString(@"formatWithScale:name:fileFormat:");
     typedef id (*MethodType2)(Class, SEL, double, NSString *, NSString *);
