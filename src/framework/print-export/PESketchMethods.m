@@ -18,17 +18,17 @@
 + (NSData *)imageDataOfLayer:(MSImmutableLayer *)layer scale:(double)scale documentData:(MSImmutableDocumentData *)documentData {
     Class cls = NSClassFromString(kMSImmutableLayerAncestry);
     MSImmutableLayerAncestry * layerAncestry = [cls alloc];
-    SEL selector = NSSelectorFromString(@"initWithLayer:document:");
-    typedef MSImmutableLayerAncestry* (*MethodType1)(MSImmutableLayerAncestry *, SEL, MSImmutableLayer *, MSImmutableDocumentData *);
+    SEL selector = NSSelectorFromString(@"initWithLayer:ancestors:document:");
+    typedef MSImmutableLayerAncestry* (*MethodType1)(MSImmutableLayerAncestry *, SEL, MSImmutableLayer *, NSArray *, MSImmutableDocumentData *);
     MethodType1 method1 = (MethodType1)[layerAncestry methodForSelector:selector];
-    layerAncestry = method1(layerAncestry, selector, layer, documentData);
-    
+    layerAncestry = method1(layerAncestry, selector, layer, @[], documentData);
+
     selector = NSSelectorFromString(@"formatWithScale:name:fileFormat:");
     typedef id (*MethodType2)(Class, SEL, double, NSString *, NSString *);
     cls = NSClassFromString(kMSExportFormat);
     MethodType2 method2 = (MethodType2)[cls methodForSelector:selector];
     id exportFormat = method2(cls, selector, scale, @"", @"png");
-    
+
     selector = NSSelectorFromString(@"exportRequestsFromLayerAncestry:exportFormats:");
     typedef NSArray * (*MethodType3)(Class, SEL, MSImmutableLayerAncestry *, NSArray *);
     cls = NSClassFromString(kMSExportRequest);
@@ -36,14 +36,14 @@
     NSArray *exportRequests = method3(cls, selector, layerAncestry, @[exportFormat]);
     MSExportRequest *exportRequest = exportRequests.firstObject;
     [exportRequest setValue:[NSNumber numberWithBool:YES] forKey:@"includeArtboardBackground"];
-    
+
     cls = NSClassFromString(kMSExportManager);
     MSExportManager *exportManager = [cls alloc];
     selector = NSSelectorFromString(@"init");
     typedef MSExportManager* (*MethodType4)(MSExportManager *, SEL);
     MethodType4 method4 = (MethodType4)[exportManager methodForSelector:selector];
     exportManager = method4(exportManager, selector);
-    
+
     selector = NSSelectorFromString(@"exportedDataForRequest:");
     typedef NSData * (*MethodType5)(MSExportManager *, SEL, MSExportRequest *);
     MethodType5 method5 = (MethodType5)[exportManager methodForSelector:selector];

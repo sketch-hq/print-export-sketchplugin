@@ -8,7 +8,7 @@
 
 #import "MSConstants.h"
 
-NSString *const kMSImmutableLayerAncestry = @"MSImmutableLayerAncestry";
+NSString *const kMSImmutableLayerAncestry = @"SketchModel.MSImmutableLayerAncestry";
 NSString *const kMSExportFormat = @"MSExportFormat";
 NSString *const kMSExportRequest = @"MSExportRequest";
 NSString *const kMSExportManager = @"MSExportManager";
