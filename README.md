@@ -1,5 +1,8 @@
 # Print Export Plugin
 
+⚠️ **This plugin is no longer maintained.**
+---
+
 With this plugin you can export one Artboard per PDF page for printing, or export all Artboards on one Sketch page to a PDF to share User flows or prototyping overviews.
 
 You can choose to show Artboard names, shadows and prototyping links, export to a variety of standard paper sizes in landscape or portrait orientation, and even add bleed and crop marks.
